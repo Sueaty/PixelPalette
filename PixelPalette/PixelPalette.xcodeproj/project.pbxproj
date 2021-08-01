@@ -15,6 +15,7 @@
 		80F2084F26B17DD000E35BB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80F2084D26B17DD000E35BB1 /* LaunchScreen.storyboard */; };
 		80F2086026B17F0C00E35BB1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2085F26B17F0C00E35BB1 /* MainViewController.swift */; };
 		80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2086326B17F1D00E35BB1 /* BaseViewController.swift */; };
+		80F2086826B6989B00E35BB1 /* CGFloat+static.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2086726B6989B00E35BB1 /* CGFloat+static.swift */; };
 		8B7AE82F956D697E8E663257 /* Pods_PixelPalette.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE6A0AF52EB835BF040D0230 /* Pods_PixelPalette.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		80F2085026B17DD000E35BB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		80F2085F26B17F0C00E35BB1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		80F2086326B17F1D00E35BB1 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		80F2086726B6989B00E35BB1 /* CGFloat+static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+static.swift"; sourceTree = "<group>"; };
 		FE6A0AF52EB835BF040D0230 /* Pods_PixelPalette.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PixelPalette.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -75,6 +77,7 @@
 		80F2083E26B17DCC00E35BB1 /* PixelPalette */ = {
 			isa = PBXGroup;
 			children = (
+				80F2086626B6988B00E35BB1 /* Extension */,
 				80F2085C26B17EED00E35BB1 /* App */,
 				80F2085B26B17EE600E35BB1 /* Common */,
 				80F2083F26B17DCC00E35BB1 /* AppDelegate.swift */,
@@ -102,6 +105,14 @@
 				80F2085F26B17F0C00E35BB1 /* MainViewController.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		80F2086626B6988B00E35BB1 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				80F2086726B6989B00E35BB1 /* CGFloat+static.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		A364D8D6ACA8DA863427DA3C /* Pods */ = {
@@ -227,6 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80F2086826B6989B00E35BB1 /* CGFloat+static.swift in Sources */,
 				80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */,
 				80F2084026B17DCC00E35BB1 /* AppDelegate.swift in Sources */,
 				80F2084A26B17DCC00E35BB1 /* PixelPalette.xcdatamodeld in Sources */,

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import AVFoundation
 
 final class MainViewController: BaseViewController {
     
@@ -35,7 +36,6 @@ final class MainViewController: BaseViewController {
         let stackView = UIStackView()
         stackView.spacing = 5
         stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -47,8 +47,12 @@ final class MainViewController: BaseViewController {
         return button
     }()
     
+    private lazy var mediaController = UIImagePickerController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        mediaController.delegate = self
     }
     
     override func setViewHierarchy() {
@@ -74,13 +78,17 @@ final class MainViewController: BaseViewController {
             make.centerX.equalToSuperview()
         }
         
+        colorPreview.snp.makeConstraints { make in
+            make.width.equalToSuperview().multipliedBy(0.2)
+        }
+                
         colorStackView.snp.makeConstraints { make in
             make.width.equalTo(commonWidth)
             make.height.equalTo(calculatedHeight * .smallScale)
             make.top.equalTo(imageView.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
         }
-        
+
         saveButton.snp.makeConstraints { make in
             make.width.equalTo(commonWidth)
             make.height.equalTo(calculatedHeight * .smallScale)
@@ -89,11 +97,67 @@ final class MainViewController: BaseViewController {
             make.bottom.equalToSuperview().offset(-20)
         }
     }
+    
+    override func setUI() {
+        let cameraButton = UIBarButtonItem(image: UIImage(systemName: "camera.fill"),
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(didTapCameraButton(_:)))
+        let photosButton = UIBarButtonItem(image: UIImage(systemName: "photo.on.rectangle.angled"),
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(didTapPhotosButton(_:)))
+        navigationItem.rightBarButtonItems = [photosButton, cameraButton]
+    }
 
 }
 
-extension CGFloat {
-    static let largeScale: CGFloat = 0.9
-    static let smallScale: CGFloat = 0.1
+private extension MainViewController {
+    @objc func didTapCameraButton(_ sender: UIBarButtonItem) {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
+            if granted {
+                print("Camera: 권한 허용")
+            } else {
+                print("Camera: 권한 거부")
+            }
+        })
+    }
+    
+    @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
+//        PHPhotoLibrary.requestAuthorization( { status in
+//            switch status{
+//            case .authorized:
+//                print("Gallery: 권한 허용")
+//            case .denied:
+//                print("Gallery: 권한 거부")
+//            case .restricted, .notDetermined:
+//                print("Gallery: 선택하지 않음")
+//            default:
+//                break
+//            }
+//        })
+    }
 }
 
+extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func navigateToUseCameraApp() {
+        mediaController.sourceType = .camera
+        mediaController.allowsEditing = true
+        navigationController?.present(mediaController, animated: true, completion: nil)
+//        present(vc, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        picker.dismiss(animated: true, completion: nil)
+        
+        guard let image = info[.editedImage] as? UIImage else {
+            print("No image found")
+            return
+        }
+        
+        // print out the image size as a test
+        print(image.size)
+    }
+}
