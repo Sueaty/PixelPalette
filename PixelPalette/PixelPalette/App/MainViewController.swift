@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Photos
 import AVFoundation
 
 final class MainViewController: BaseViewController {
@@ -108,34 +109,58 @@ final class MainViewController: BaseViewController {
                                            target: self,
                                            action: #selector(didTapPhotosButton(_:)))
         navigationItem.rightBarButtonItems = [photosButton, cameraButton]
+        navigationItem.title = "Pixel Palette"
     }
 
 }
 
 private extension MainViewController {
+    
     @objc func didTapCameraButton(_ sender: UIBarButtonItem) {
-        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
-            if granted {
-                print("Camera: 권한 허용")
-            } else {
-                print("Camera: 권한 거부")
+        let authState = AVCaptureDevice.authorizationStatus(for: .video)
+        if authState == .authorized {
+            navigateToUseCameraApp()
+        } else if authState == .notDetermined {
+            AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
+                if granted {
+                    self.navigateToUseCameraApp()
+                }
             }
-        })
+        } else {
+            showAlertController(title: "카메라")
+        }
     }
     
     @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
-//        PHPhotoLibrary.requestAuthorization( { status in
-//            switch status{
-//            case .authorized:
-//                print("Gallery: 권한 허용")
-//            case .denied:
-//                print("Gallery: 권한 거부")
-//            case .restricted, .notDetermined:
-//                print("Gallery: 선택하지 않음")
-//            default:
-//                break
-//            }
-//        })
+        let authState = PHPhotoLibrary.authorizationStatus()
+        if authState == .authorized {
+            print("사진첩 열기")
+        } else if authState == .notDetermined {
+            PHPhotoLibrary.requestAuthorization { state in
+                if state == .authorized {
+                    print("사진첩 열기")
+                }
+            }
+        } else {
+            showAlertController(title: "사진첩")
+        }
+    }
+    
+    func showAlertController(title: String) {
+        let alert = UIAlertController(title: "\(title)에 대한 접근 권한이 없어요.",
+                                      message: "설정 앱에서 권한을 수정해주세요 :)",
+                                      preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let confirm = UIAlertAction(title: "지금 설정하기", style: .default, handler: { _ in
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
+                                      options: [:],
+                                      completionHandler: nil)
+        })
+        
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        present(alert, animated: false, completion: nil)
+        
     }
 }
 
@@ -144,8 +169,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     func navigateToUseCameraApp() {
         mediaController.sourceType = .camera
         mediaController.allowsEditing = true
-        navigationController?.present(mediaController, animated: true, completion: nil)
-//        present(vc, animated: true)
+        //navigationController?.present(mediaController, animated: true, completion: nil)
+        present(mediaController, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -157,7 +182,6 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
             return
         }
         
-        // print out the image size as a test
-        print(image.size)
+        imageView.image = image
     }
 }
