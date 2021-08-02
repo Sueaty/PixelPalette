@@ -15,6 +15,7 @@ final class MainViewController: BaseViewController {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .red
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -119,11 +120,11 @@ private extension MainViewController {
     @objc func didTapCameraButton(_ sender: UIBarButtonItem) {
         let authState = AVCaptureDevice.authorizationStatus(for: .video)
         if authState == .authorized {
-            navigateToUseCameraApp()
+            navigateToUseCamera()
         } else if authState == .notDetermined {
             AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
                 if granted {
-                    self.navigateToUseCameraApp()
+                    self.navigateToUseCamera()
                 }
             }
         } else {
@@ -134,11 +135,11 @@ private extension MainViewController {
     @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
-            print("사진첩 열기")
+            self.navigateToPhotoLibrary()
         } else if authState == .notDetermined {
-            PHPhotoLibrary.requestAuthorization { state in
+            PHPhotoLibrary.requestAuthorization { [unowned self] state in
                 if state == .authorized {
-                    print("사진첩 열기")
+                    self.navigateToPhotoLibrary()
                 }
             }
         } else {
@@ -166,22 +167,29 @@ private extension MainViewController {
 
 extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    func navigateToUseCameraApp() {
+    func navigateToUseCamera() {
         mediaController.sourceType = .camera
         mediaController.allowsEditing = true
-        //navigationController?.present(mediaController, animated: true, completion: nil)
+        present(mediaController, animated: true)
+    }
+    
+    func navigateToPhotoLibrary() {
+        mediaController.sourceType = .photoLibrary
+        mediaController.allowsEditing = true
         present(mediaController, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        picker.dismiss(animated: true, completion: nil)
+        var image: UIImage?
         
-        guard let image = info[.editedImage] as? UIImage else {
-            print("No image found")
-            return
+        if let editedImage = info[.editedImage] as? UIImage {
+            image = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            image = originalImage
         }
         
         imageView.image = image
+        picker.dismiss(animated: true, completion: nil)
     }
 }
