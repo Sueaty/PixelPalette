@@ -8,7 +8,7 @@
 import UIKit
 
 extension CGFloat {
-    static let largeScale: CGFloat = 0.9
+    static let largeScale: CGFloat = 0.95
     static let smallScale: CGFloat = 0.1
 }
 

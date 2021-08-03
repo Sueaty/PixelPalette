@@ -16,6 +16,7 @@
 		80F2086026B17F0C00E35BB1 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2085F26B17F0C00E35BB1 /* MainViewController.swift */; };
 		80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2086326B17F1D00E35BB1 /* BaseViewController.swift */; };
 		80F2086826B6989B00E35BB1 /* CGFloat+static.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2086726B6989B00E35BB1 /* CGFloat+static.swift */; };
+		80F2087526B7E4F300E35BB1 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */; };
 		8B7AE82F956D697E8E663257 /* Pods_PixelPalette.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE6A0AF52EB835BF040D0230 /* Pods_PixelPalette.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		80F2085F26B17F0C00E35BB1 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		80F2086326B17F1D00E35BB1 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		80F2086726B6989B00E35BB1 /* CGFloat+static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+static.swift"; sourceTree = "<group>"; };
+		80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		FE6A0AF52EB835BF040D0230 /* Pods_PixelPalette.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PixelPalette.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				80F2086326B17F1D00E35BB1 /* BaseViewController.swift */,
+				80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				80F2086826B6989B00E35BB1 /* CGFloat+static.swift in Sources */,
 				80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */,
 				80F2084026B17DCC00E35BB1 /* AppDelegate.swift in Sources */,
+				80F2087526B7E4F300E35BB1 /* ColorPickerView.swift in Sources */,
 				80F2084A26B17DCC00E35BB1 /* PixelPalette.xcdatamodeld in Sources */,
 				80F2084226B17DCC00E35BB1 /* SceneDelegate.swift in Sources */,
 				80F2086026B17F0C00E35BB1 /* MainViewController.swift in Sources */,

@@ -20,6 +20,11 @@ final class MainViewController: BaseViewController {
         return imageView
     }()
     
+    private lazy var pickerView: ColorPickerView = {
+        let pickerView = ColorPickerView()
+        return pickerView
+    }()
+    
     private lazy var colorPreview: UIView = {
         let preview = UIView()
         preview.backgroundColor = .yellow
@@ -61,10 +66,12 @@ final class MainViewController: BaseViewController {
         super.setViewHierarchy()
         
         view.addSubview(imageView)
-        view.addSubview(colorStackView)
-        colorStackView.addArrangedSubview(colorPreview)
-        colorStackView.addArrangedSubview(colorHexLabel)
-        view.addSubview(saveButton)
+        imageView.addSubview(pickerView)
+        imageView.bringSubviewToFront(pickerView)
+//        view.addSubview(colorStackView)
+//        colorStackView.addArrangedSubview(colorPreview)
+//        colorStackView.addArrangedSubview(colorHexLabel)
+//        view.addSubview(saveButton)
     }
     
     override func setViewConstraint() {
@@ -74,30 +81,29 @@ final class MainViewController: BaseViewController {
         let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
         
         imageView.snp.makeConstraints { make in
-            make.width.equalTo(commonWidth)
-            make.height.equalTo(calculatedHeight * 0.7)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+            make.width.height.equalTo(commonWidth)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.centerX.equalToSuperview()
         }
         
-        colorPreview.snp.makeConstraints { make in
-            make.width.equalToSuperview().multipliedBy(0.2)
-        }
-                
-        colorStackView.snp.makeConstraints { make in
-            make.width.equalTo(commonWidth)
-            make.height.equalTo(calculatedHeight * .smallScale)
-            make.top.equalTo(imageView.snp.bottom).offset(10)
-            make.centerX.equalToSuperview()
-        }
-
-        saveButton.snp.makeConstraints { make in
-            make.width.equalTo(commonWidth)
-            make.height.equalTo(calculatedHeight * .smallScale)
-            make.top.equalTo(colorStackView.snp.bottom).offset(10)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-20)
-        }
+//        colorPreview.snp.makeConstraints { make in
+//            make.width.equalToSuperview().multipliedBy(0.2)
+//        }
+//
+//        colorStackView.snp.makeConstraints { make in
+//            make.width.equalTo(commonWidth)
+//            make.height.equalTo(calculatedHeight * .smallScale)
+//            make.top.equalTo(imageView.snp.bottom).offset(10)
+//            make.centerX.equalToSuperview()
+//        }
+//
+//        saveButton.snp.makeConstraints { make in
+//            make.width.equalTo(commonWidth)
+//            make.height.equalTo(calculatedHeight * .smallScale)
+//            make.top.equalTo(colorStackView.snp.bottom).offset(10)
+//            make.centerX.equalToSuperview()
+//            make.bottom.equalToSuperview().offset(-20)
+//        }
     }
     
     override func setUI() {
