@@ -14,14 +14,19 @@ final class MainViewController: BaseViewController {
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.clipsToBounds = true
         imageView.backgroundColor = .red
         imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var pickerView: ColorPickerView = {
+        let centerPoint: CGFloat = view.frame.width * .largeScale / 2
         let pickerView = ColorPickerView()
+        pickerView.lastLocation = CGPoint(x: centerPoint, y: centerPoint)
+        pickerView.center = CGPoint(x: centerPoint, y: centerPoint)
         return pickerView
     }()
     
@@ -55,6 +60,13 @@ final class MainViewController: BaseViewController {
     }()
     
     private lazy var mediaController = UIImagePickerController()
+    
+    private var image: UIImage? {
+        didSet {
+            pickerView.isHidden = false
+        }
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,6 +133,34 @@ final class MainViewController: BaseViewController {
 
 }
 
+extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func navigateToUseCamera() {
+        mediaController.sourceType = .camera
+        mediaController.allowsEditing = true
+        present(mediaController, animated: true)
+    }
+    
+    func navigateToPhotoLibrary() {
+        mediaController.sourceType = .photoLibrary
+        mediaController.allowsEditing = true
+        present(mediaController, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            image = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            image = originalImage
+        }
+        
+        imageView.image = image
+        picker.dismiss(animated: true, completion: nil)
+    }
+}
+
 private extension MainViewController {
     
     @objc func didTapCameraButton(_ sender: UIBarButtonItem) {
@@ -169,33 +209,5 @@ private extension MainViewController {
         present(alert, animated: false, completion: nil)
         
     }
-}
-
-extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    func navigateToUseCamera() {
-        mediaController.sourceType = .camera
-        mediaController.allowsEditing = true
-        present(mediaController, animated: true)
-    }
-    
-    func navigateToPhotoLibrary() {
-        mediaController.sourceType = .photoLibrary
-        mediaController.allowsEditing = true
-        present(mediaController, animated: true)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        var image: UIImage?
-        
-        if let editedImage = info[.editedImage] as? UIImage {
-            image = editedImage
-        } else if let originalImage = info[.originalImage] as? UIImage {
-            image = originalImage
-        }
-        
-        imageView.image = image
-        picker.dismiss(animated: true, completion: nil)
-    }
 }
