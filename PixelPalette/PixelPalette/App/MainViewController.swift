@@ -207,7 +207,6 @@ private extension MainViewController {
         alert.addAction(cancel)
         alert.addAction(confirm)
         present(alert, animated: false, completion: nil)
-        
     }
     
 }
