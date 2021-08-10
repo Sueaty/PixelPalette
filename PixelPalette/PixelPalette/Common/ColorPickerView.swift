@@ -16,16 +16,16 @@ final class ColorPickerView: UIView {
         super.init(frame: frame)
         let panGestureRecognizer = UIPanGestureRecognizer(target: self,
                                                           action: #selector(panColorPicker(_:)))
-        self.gestureRecognizers = [panGestureRecognizer]
+        gestureRecognizers = [panGestureRecognizer]
         
-        self.bounds.size = CGSize(width: 30, height: 30)
-        self.layer.backgroundColor = UIColor.clear.cgColor
-        self.layer.isOpaque = false
-        self.layer.borderWidth = 5
-        self.layer.borderColor = UIColor.black.cgColor
-        self.layer.cornerRadius = 15
+        bounds.size = CGSize(width: 20, height: 20)
+        layer.backgroundColor = UIColor.clear.cgColor
+        layer.isOpaque = false
+        layer.borderWidth = 5
+        layer.borderColor = UIColor.black.cgColor
+        layer.cornerRadius = 10
         
-        self.isHidden = true
+        isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -41,21 +41,26 @@ final class ColorPickerView: UIView {
 private extension ColorPickerView {
     
     @objc func panColorPicker(_ sender: UIPanGestureRecognizer) {
+        if sender.state == .began || sender.state == .changed {
+            bounds.size = CGSize(width: 40, height: 40)
+            layer.cornerRadius = 20
+        } else if sender.state == .ended {
+            bounds.size = CGSize(width: 20, height: 20)
+            layer.cornerRadius = 10
+        }
+        
         guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
 
-        let minCenterX = frame.size.width / 2
-        let minCenterY = frame.size.height / 2
-        let maxCenterX = superview.frame.width - frame.size.width / 2
-        let maxCenterY = superview.frame.height - frame.size.height / 2
-        
+        let minCenter = frame.size.width / 2                            // height도 같은 값
+        let maxCenter = superview.frame.width - frame.size.width / 2    // height도 같은 값
         let newCenterX = center.x + translation.x
         let newCenterY = center.y + translation.y
         
-        center.x = min(maxCenterX, max(minCenterX, newCenterX))
-        center.y = min(maxCenterY, max(minCenterY, newCenterY))
+        center.x = min(maxCenter, max(minCenter, newCenterX))
+        center.y = min(maxCenter, max(minCenter, newCenterY))
         
-        sender.setTranslation(.zero, in: self) // does this slow everything down?
+        sender.setTranslation(.zero, in: self)
     }
     
 }
