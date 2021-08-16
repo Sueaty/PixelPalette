@@ -8,8 +8,14 @@
 import UIKit
 import CoreGraphics
 
+protocol ColorPickerDelegate {
+    func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint)
+}
+
 final class ColorPickerView: UIView {
     
+    var delegate: ColorPickerDelegate?
+    var context: CGContext?
     var lastLocation = CGPoint(x: 0, y: 0)
     
     override init(frame: CGRect) {
@@ -59,6 +65,8 @@ private extension ColorPickerView {
         
         center.x = min(maxCenter, max(minCenter, newCenterX))
         center.y = min(maxCenter, max(minCenter, newCenterY))
+        delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
+                                                                       y: center.y))
         
         sender.setTranslation(.zero, in: self)
     }

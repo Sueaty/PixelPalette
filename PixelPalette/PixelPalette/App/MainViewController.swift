@@ -70,8 +70,11 @@ final class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    }
+    
+    override func setInit() {
         mediaController.delegate = self
+        pickerView.delegate = self
     }
     
     override func setViewHierarchy() {
@@ -80,6 +83,7 @@ final class MainViewController: BaseViewController {
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         imageView.bringSubviewToFront(pickerView)
+        view.addSubview(colorPreview)
 //        view.addSubview(colorStackView)
 //        colorStackView.addArrangedSubview(colorPreview)
 //        colorStackView.addArrangedSubview(colorHexLabel)
@@ -90,12 +94,18 @@ final class MainViewController: BaseViewController {
         super.setViewConstraint()
         
         let commonWidth: CGFloat = view.frame.width * .largeScale
-        let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
+        // let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
         
         imageView.snp.makeConstraints { make in
             make.width.height.equalTo(commonWidth)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.centerX.equalToSuperview()
+        }
+        
+        colorPreview.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(50)
+            make.leading.equalToSuperview().offset(10)
+            make.width.height.equalTo(100)
         }
         
 //        colorPreview.snp.makeConstraints { make in
@@ -131,34 +141,6 @@ final class MainViewController: BaseViewController {
         navigationItem.title = "Pixel Palette"
     }
 
-}
-
-extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    
-    func navigateToUseCamera() {
-        mediaController.sourceType = .camera
-        mediaController.allowsEditing = true
-        present(mediaController, animated: true)
-    }
-    
-    func navigateToPhotoLibrary() {
-        mediaController.sourceType = .photoLibrary
-        mediaController.allowsEditing = true
-        present(mediaController, animated: true)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        if let editedImage = info[.editedImage] as? UIImage {
-            image = editedImage
-        } else if let originalImage = info[.originalImage] as? UIImage {
-            image = originalImage
-        }
-        
-        imageView.image = image
-        picker.dismiss(animated: true, completion: nil)
-    }
 }
 
 private extension MainViewController {
@@ -207,6 +189,44 @@ private extension MainViewController {
         alert.addAction(cancel)
         alert.addAction(confirm)
         present(alert, animated: false, completion: nil)
+    }
+    
+}
+
+extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func navigateToUseCamera() {
+        mediaController.sourceType = .camera
+        mediaController.allowsEditing = true
+        present(mediaController, animated: true)
+    }
+    
+    func navigateToPhotoLibrary() {
+        mediaController.sourceType = .photoLibrary
+        mediaController.allowsEditing = true
+        present(mediaController, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            image = editedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            image = originalImage
+        }
+        
+        imageView.image = image
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+}
+
+extension MainViewController: ColorPickerDelegate {
+    
+    func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
+        let pixelColor = imageView.image?.getPixelColor(point: location)
+        colorPreview.backgroundColor = pixelColor
     }
     
 }

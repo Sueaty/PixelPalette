@@ -12,9 +12,14 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setInit()
         setViewHierarchy()
         setViewConstraint()
         setUI()
+    }
+    
+    func setInit() {
+        // override here
     }
     
     func setViewHierarchy() {
