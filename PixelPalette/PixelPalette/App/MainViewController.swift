@@ -12,9 +12,15 @@ import AVFoundation
 
 final class MainViewController: BaseViewController {
     
+    private lazy var defaultView: DefaultView = {
+        let view = DefaultView()
+        view.type = .Picker
+        view.isHidden = false
+        return view
+    }()
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        //imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -29,39 +35,11 @@ final class MainViewController: BaseViewController {
         return pickerView
     }()
     
-    private lazy var colorPreview: UIView = {
-        let preview = UIView()
-        preview.backgroundColor = .yellow
-        preview.translatesAutoresizingMaskIntoConstraints = false
-        return preview
-    }()
-    
-    private lazy var colorHexLabel: UILabel = {
-        let label = UILabel()
-        label.backgroundColor = .blue
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var colorStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.spacing = 5
-        stackView.axis = .horizontal
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    private lazy var saveButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .green
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     private lazy var mediaController = UIImagePickerController()
     
     private var image: UIImage? {
         didSet {
+            defaultView.isHidden = true
             pickerView.isHidden = false
             pickedColor = nil
         }
@@ -81,15 +59,10 @@ final class MainViewController: BaseViewController {
     
     override func setViewHierarchy() {
         super.setViewHierarchy()
-        
+        view.addSubview(defaultView)
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         imageView.bringSubviewToFront(pickerView)
-//        view.addSubview(colorPreview)
-//        view.addSubview(colorStackView)
-//        colorStackView.addArrangedSubview(colorPreview)
-//        colorStackView.addArrangedSubview(colorHexLabel)
-//        view.addSubview(saveButton)
     }
     
     override func setViewConstraint() {
@@ -97,6 +70,12 @@ final class MainViewController: BaseViewController {
         
         let commonWidth: CGFloat = view.frame.width * .largeScale
         // let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
+        
+        defaultView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+        }
         
         imageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
