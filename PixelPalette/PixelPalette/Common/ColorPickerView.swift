@@ -15,7 +15,6 @@ protocol ColorPickerDelegate {
 final class ColorPickerView: UIView {
     
     var delegate: ColorPickerDelegate?
-    var context: CGContext?
     var lastLocation = CGPoint(x: 0, y: 0)
     
     override init(frame: CGRect) {
@@ -41,7 +40,7 @@ final class ColorPickerView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastLocation = self.center
     }
-    
+
 }
 
 private extension ColorPickerView {
@@ -57,18 +56,17 @@ private extension ColorPickerView {
         
         guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
-
-        let minCenter = frame.size.width / 2                            // height도 같은 값
-        let maxCenter = superview.frame.width - frame.size.width / 2    // height도 같은 값
-        let newCenterX = center.x + translation.x
-        let newCenterY = center.y + translation.y
-        
-        center.x = min(maxCenter, max(minCenter, newCenterX))
-        center.y = min(maxCenter, max(minCenter, newCenterY))
+//
+//        let minCenter = frame.size.width / 2                            // height도 같은 값
+//        let maxCenter = superview.frame.width - frame.size.width / 2    // height도 같은 값
+//        let newCenterX = center.x + translation.x
+//        let newCenterY = center.y + translation.y
+//
+//        center.x = min(maxCenter, max(minCenter, newCenterX))
+//        center.y = min(maxCenter, max(minCenter, newCenterY))
+//        sender.setTranslation(.zero, in: self)
         delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
                                                                        y: center.y))
-        
-        sender.setTranslation(.zero, in: self)
     }
     
 }

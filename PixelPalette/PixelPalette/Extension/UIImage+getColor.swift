@@ -7,29 +7,24 @@
 
 import UIKit
 
-extension UIImage {
-    
-    func getPixelColor(point: CGPoint) -> UIColor? {
-        guard let cgImage = cgImage,
-            let pixelData = cgImage.dataProvider?.data
-            else { return nil }
-
-        let data: UnsafePointer<UInt8> = CFDataGetBytePtr(pixelData)
-
-        let alphaInfo = cgImage.alphaInfo
-        assert(alphaInfo == .premultipliedFirst || alphaInfo == .first || alphaInfo == .noneSkipFirst, "This routine expects alpha to be first component")
-
-        let byteOrderInfo = cgImage.byteOrderInfo
-        assert(byteOrderInfo == .order32Little || byteOrderInfo == .orderDefault, "This routine expects little-endian 32bit format")
-
-        let bytesPerRow = cgImage.bytesPerRow
-        let pixelInfo = Int(point.y) * bytesPerRow + Int(point.x) * 4;
-
-        let a: CGFloat = CGFloat(data[pixelInfo+3]) / 255
-        let r: CGFloat = CGFloat(data[pixelInfo+2]) / 255
-        let g: CGFloat = CGFloat(data[pixelInfo+1]) / 255
-        let b: CGFloat = CGFloat(data[pixelInfo  ]) / 255
-
-        return UIColor(red: r, green: g, blue: b, alpha: a)
-    }
-}
+//extension UIImage {
+//
+//    subscript (location: CGPoint) -> UIColor? {
+//        let x = location.x
+//        let y = location.y
+//
+//        let provider = self.cgImage!.dataProvider
+//        let providerData = provider!.data
+//        let data = CFDataGetBytePtr(providerData)
+//
+//        let numberOfComponents = 4
+//        let pixelData = ((Int(size.width) * y) + x) * numberOfComponents
+//
+//        let r = CGFloat(data![pixelData]) / 255.0
+//        let g = CGFloat(data![pixelData + 1]) / 255.0
+//        let b = CGFloat(data![pixelData + 2]) / 255.0
+//        let a = CGFloat(data![pixelData + 3]) / 255.0
+//
+//        return UIColor(red: r, green: g, blue: b, alpha: a)
+//    }
+//}

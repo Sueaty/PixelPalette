@@ -14,9 +14,8 @@ final class MainViewController: BaseViewController {
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.backgroundColor = .red
-        imageView.contentMode = .scaleAspectFit
+        //imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -64,8 +63,11 @@ final class MainViewController: BaseViewController {
     private var image: UIImage? {
         didSet {
             pickerView.isHidden = false
+            pickedColor = nil
         }
     }
+    
+    private var pickedColor: UIColor?
     
     
     override func viewDidLoad() {
@@ -83,7 +85,7 @@ final class MainViewController: BaseViewController {
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         imageView.bringSubviewToFront(pickerView)
-        view.addSubview(colorPreview)
+//        view.addSubview(colorPreview)
 //        view.addSubview(colorStackView)
 //        colorStackView.addArrangedSubview(colorPreview)
 //        colorStackView.addArrangedSubview(colorHexLabel)
@@ -97,16 +99,19 @@ final class MainViewController: BaseViewController {
         // let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
         
         imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(commonWidth)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.centerX.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
         }
+
+//
+//        colorPreview.snp.makeConstraints { make in
+//            make.top.equalTo(imageView.snp.bottom).offset(50)
+//            make.leading.equalToSuperview().offset(10)
+//            make.width.height.equalTo(100)
+//        }
         
-        colorPreview.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(50)
-            make.leading.equalToSuperview().offset(10)
-            make.width.height.equalTo(100)
-        }
+        
         
 //        colorPreview.snp.makeConstraints { make in
 //            make.width.equalToSuperview().multipliedBy(0.2)
@@ -129,36 +134,25 @@ final class MainViewController: BaseViewController {
     }
     
     override func setUI() {
-        let cameraButton = UIBarButtonItem(image: UIImage(systemName: "camera.fill"),
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(didTapCameraButton(_:)))
+        let colorPreview = UIBarButtonItem(image: UIImage(systemName: "square.fill"),
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(savePickedColor(_:)))
+        colorPreview.tintColor = .lightGray
+        
         let photosButton = UIBarButtonItem(image: UIImage(systemName: "photo.on.rectangle.angled"),
                                            style: .plain,
                                            target: self,
                                            action: #selector(didTapPhotosButton(_:)))
-        navigationItem.rightBarButtonItems = [photosButton, cameraButton]
+        
+        navigationItem.leftBarButtonItem = colorPreview
+        navigationItem.rightBarButtonItem = photosButton
         navigationItem.title = "Pixel Palette"
     }
 
 }
 
 private extension MainViewController {
-    
-    @objc func didTapCameraButton(_ sender: UIBarButtonItem) {
-        let authState = AVCaptureDevice.authorizationStatus(for: .video)
-        if authState == .authorized {
-            navigateToUseCamera()
-        } else if authState == .notDetermined {
-            AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
-                if granted {
-                    self.navigateToUseCamera()
-                }
-            }
-        } else {
-            showAlertController(title: "카메라")
-        }
-    }
     
     @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
         let authState = PHPhotoLibrary.authorizationStatus()
@@ -171,11 +165,15 @@ private extension MainViewController {
                 }
             }
         } else {
-            showAlertController(title: "사진첩")
+            showAccessAuthAlert(title: "사진첩")
         }
     }
     
-    func showAlertController(title: String) {
+    @objc func savePickedColor(_ sender: UIBarButtonItem) {
+        if pickedColor != nil { showSaveAlert() }
+    }
+    
+    func showAccessAuthAlert(title: String) {
         let alert = UIAlertController(title: "\(title)에 대한 접근 권한이 없어요.",
                                       message: "설정 앱에서 권한을 수정해주세요 :)",
                                       preferredStyle: .alert)
@@ -191,31 +189,41 @@ private extension MainViewController {
         present(alert, animated: false, completion: nil)
     }
     
+    func showSaveAlert() {
+        // TO DO: 색 hex 값으로 제목 지정
+        let alert = UIAlertController(title: "색 저장",
+                                      message: "text field",
+                                      preferredStyle: .alert)
+        let save = UIAlertAction(title: "저장", style: .default) { action in
+            let colorName = alert.textFields?[0].text
+            // save color
+        }
+        
+        alert.addAction(save)
+        alert.addTextField { textField in
+            textField.placeholder = "당신의 색 이름을 정해주세요"
+        }
+        present(alert, animated: false, completion: nil)
+    }
+    
 }
 
 extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    func navigateToUseCamera() {
-        mediaController.sourceType = .camera
-        mediaController.allowsEditing = true
-        present(mediaController, animated: true)
-    }
-    
     func navigateToPhotoLibrary() {
         mediaController.sourceType = .photoLibrary
-        mediaController.allowsEditing = true
+        mediaController.allowsEditing = false
         present(mediaController, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        if let editedImage = info[.editedImage] as? UIImage {
-            image = editedImage
-        } else if let originalImage = info[.originalImage] as? UIImage {
+        guard let originalImage = info[.originalImage] as? UIImage else { return }
+        if originalImage.size.width > originalImage.size.height {
+            image = originalImage.rotate(by: .pi/2)
+        } else {
             image = originalImage
         }
-        
         imageView.image = image
         picker.dismiss(animated: true, completion: nil)
     }
@@ -225,8 +233,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-        let pixelColor = imageView.image?.getPixelColor(point: location)
-        colorPreview.backgroundColor = pixelColor
+//        let pixelColor = image?[location]
+//        colorPreview.backgroundColor = pixelColor
     }
     
 }
