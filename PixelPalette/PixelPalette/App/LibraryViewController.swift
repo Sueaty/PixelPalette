@@ -1,19 +1,18 @@
 //
-//  ViewController.swift
+//  LibraryViewController.swift
 //  PixelPalette
 //
-//  Created by Sue Cho on 2021/07/28.
+//  Created by Sue Cho on 2021/08/08.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
+class LibraryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
 
-
 }
-
