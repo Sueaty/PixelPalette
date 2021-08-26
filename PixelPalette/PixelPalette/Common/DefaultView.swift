@@ -15,7 +15,7 @@ enum ScreenType {
 
 final class DefaultView: BaseView {
     // MARK:- Properties
-    var type: ScreenType?
+    var type: ScreenType
     
     // MARK:- View
     private lazy var imageView: UIImageView = {
@@ -32,8 +32,19 @@ final class DefaultView: BaseView {
         return label
     }()
     
+    // MARK:- Initializer
+    init(frame: CGRect, type: ScreenType) {
+        self.type = type
+        
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK:- Function Override
     override func setUI() {
-        guard let type = type else { return }
         switch type {
         case .Picker:
             infoLabel.text = "사진을 선택해주세요!"

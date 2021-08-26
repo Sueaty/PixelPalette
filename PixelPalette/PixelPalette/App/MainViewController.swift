@@ -13,43 +13,46 @@ import AVFoundation
 final class MainViewController: BaseViewController {
     
     private lazy var defaultView: DefaultView = {
-        let view = DefaultView()
-        view.type = .Picker
-        view.isHidden = false
+        let view = DefaultView(frame: .zero, type: .Picker)
         return view
     }()
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var pickerView: ColorPickerView = {
-        let centerPoint: CGFloat = view.frame.width * .largeScale / 2
         let pickerView = ColorPickerView()
-        pickerView.lastLocation = CGPoint(x: centerPoint, y: centerPoint)
-        pickerView.center = CGPoint(x: centerPoint, y: centerPoint)
+        let centerX = view.frame.width / 2
+        let centerY = (UIScreen.main.bounds.height - navigationBarHeight - tabbarHeight) / 2
+        let centerPoint = CGPoint(x: centerX, y: centerY)
+        pickerView.lastLocation = centerPoint
+        pickerView.center = centerPoint
         return pickerView
     }()
-    
+
     private lazy var mediaController = UIImagePickerController()
     
     private var image: UIImage? {
         didSet {
-            defaultView.isHidden = true
             pickerView.isHidden = false
             pickedColor = nil
         }
     }
     
     private var pickedColor: UIColor?
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private var statusBarHeight: CGFloat {
+        UIApplication.shared.statusBarFrame.height
+    }
+    private var navigationBarHeight: CGFloat {
+        return navigationController!.navigationBar.intrinsicContentSize.height
+    }
+    private var tabbarHeight: CGFloat {
+        return tabBarController!.tabBar.frame.height
     }
     
     override func setInit() {
@@ -68,9 +71,6 @@ final class MainViewController: BaseViewController {
     override func setViewConstraint() {
         super.setViewConstraint()
         
-        let commonWidth: CGFloat = view.frame.width * .largeScale
-        // let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
-        
         defaultView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
@@ -82,37 +82,11 @@ final class MainViewController: BaseViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
-
-//
-//        colorPreview.snp.makeConstraints { make in
-//            make.top.equalTo(imageView.snp.bottom).offset(50)
-//            make.leading.equalToSuperview().offset(10)
-//            make.width.height.equalTo(100)
-//        }
-        
-        
-        
-//        colorPreview.snp.makeConstraints { make in
-//            make.width.equalToSuperview().multipliedBy(0.2)
-//        }
-//
-//        colorStackView.snp.makeConstraints { make in
-//            make.width.equalTo(commonWidth)
-//            make.height.equalTo(calculatedHeight * .smallScale)
-//            make.top.equalTo(imageView.snp.bottom).offset(10)
-//            make.centerX.equalToSuperview()
-//        }
-//
-//        saveButton.snp.makeConstraints { make in
-//            make.width.equalTo(commonWidth)
-//            make.height.equalTo(calculatedHeight * .smallScale)
-//            make.top.equalTo(colorStackView.snp.bottom).offset(10)
-//            make.centerX.equalToSuperview()
-//            make.bottom.equalToSuperview().offset(-20)
-//        }
     }
     
     override func setUI() {
+        super.setUI()
+        
         let colorPreview = UIBarButtonItem(image: UIImage(systemName: "square.fill"),
                                            style: .plain,
                                            target: self,
@@ -134,6 +108,12 @@ final class MainViewController: BaseViewController {
 private extension MainViewController {
     
     @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
+        // view
+        if image == nil {
+            defaultView.removeFromSuperview()
+        }
+        
+        // authorize
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
             self.navigateToPhotoLibrary()
@@ -198,11 +178,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let originalImage = info[.originalImage] as? UIImage else { return }
-        if originalImage.size.width > originalImage.size.height {
-            image = originalImage.rotate(by: .pi/2)
-        } else {
-            image = originalImage
-        }
+        
+        image = originalImage
+        imageView.contentMode = originalImage.size.width > originalImage.size.height ? .scaleAspectFit : .scaleAspectFill
+
         imageView.image = image
         picker.dismiss(animated: true, completion: nil)
     }
@@ -210,10 +189,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 }
 
 extension MainViewController: ColorPickerDelegate {
-    
+
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
 //        let pixelColor = image?[location]
 //        colorPreview.backgroundColor = pixelColor
     }
-    
+
 }
