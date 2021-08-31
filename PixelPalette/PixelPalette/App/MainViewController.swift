@@ -14,6 +14,7 @@ final class MainViewController: BaseViewController {
     
     private lazy var defaultView: DefaultView = {
         let view = DefaultView(frame: .zero, type: .Picker)
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     

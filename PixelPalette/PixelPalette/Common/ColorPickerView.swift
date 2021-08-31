@@ -17,22 +17,22 @@ final class ColorPickerView: UIView {
     // MARK:- Properties
     var delegate: ColorPickerDelegate?
     var lastLocation = CGPoint(x: 0, y: 0)
-    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panColorPicker(_:)))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panColorPicker(_:)))
+        addGestureRecognizer(panGestureRecognizer)
         
-        gestureRecognizers = [panGestureRecognizer]
-        
-        bounds.size = CGSize(width: 14, height: 14)
+        bounds.size = CGSize(width: 16, height: 16)
         
         layer.borderWidth = 3
-        layer.cornerRadius = 7
+        layer.cornerRadius = 8
         layer.isOpaque = false
         layer.borderColor = UIColor.black.cgColor
         layer.backgroundColor = UIColor.clear.cgColor
         
         isHidden = true
+        isUserInteractionEnabled = true
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +55,7 @@ private extension ColorPickerView {
             bounds.size = CGSize(width: 14, height: 14)
             layer.cornerRadius = 7
         }
-        
+
         guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
 
@@ -68,7 +68,7 @@ private extension ColorPickerView {
 
         center.x = min(maxCenterX, max(minCenterX, newCenterX))
         center.y = min(maxCenterY, max(minCenterY, newCenterY))
-        
+
         sender.setTranslation(.zero, in: self)
         delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
                                                                        y: center.y))
