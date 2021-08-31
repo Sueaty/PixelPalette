@@ -17,6 +17,7 @@ final class ColorPickerView: UIView {
     // MARK:- Properties
     var delegate: ColorPickerDelegate?
     var lastLocation = CGPoint(x: 0, y: 0)
+    var imageView: UIImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,7 +43,6 @@ final class ColorPickerView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastLocation = self.center
     }
-    
 }
 
 private extension ColorPickerView {
@@ -58,20 +58,39 @@ private extension ColorPickerView {
 
         guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
-
+        
         let minCenterX = frame.size.width / 2
-        let minCenterY = frame.size.height / 2
         let maxCenterX = superview.frame.width - frame.size.width / 2
-        let maxCenterY = superview.frame.height - frame.size.height / 2
         let newCenterX = center.x + translation.x
+        
+        let minCenterY = 342.5 - imageView.contentClippingRect.height/2 - frame.size.height
+        let maxCenterY = 342.5 + imageView.contentClippingRect.height/2 - frame.size.height
         let newCenterY = center.y + translation.y
 
         center.x = min(maxCenterX, max(minCenterX, newCenterX))
         center.y = min(maxCenterY, max(minCenterY, newCenterY))
-
+        
+        print(imageView.contentClippingRect.height)
         sender.setTranslation(.zero, in: self)
         delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
                                                                        y: center.y))
     }
     
+}
+
+extension UIImageView {
+    var contentClippingRect: CGRect {
+        guard let image = image else { return bounds }
+        guard contentMode == .scaleAspectFit else { return bounds }
+        guard image.size.width > 0 && image.size.height > 0 else { return bounds }
+
+        let scale: CGFloat
+        scale = frame.width / image.size.width
+
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let x = (bounds.width - size.width) / 2.0
+        let y = (bounds.height - size.height) / 2.0
+
+        return CGRect(x: x, y: y, width: size.width, height: size.height)
+    }
 }
