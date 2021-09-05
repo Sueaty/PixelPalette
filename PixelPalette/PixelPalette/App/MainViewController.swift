@@ -8,72 +8,57 @@
 import UIKit
 import SnapKit
 import Photos
-import AVFoundation
 
 final class MainViewController: BaseViewController {
     
+    private lazy var defaultView: DefaultView = {
+        let view = DefaultView(frame: .zero, type: .Picker)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        //imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var pickerView: ColorPickerView = {
-        let centerPoint: CGFloat = view.frame.width * .largeScale / 2
         let pickerView = ColorPickerView()
-        pickerView.lastLocation = CGPoint(x: centerPoint, y: centerPoint)
-        pickerView.center = CGPoint(x: centerPoint, y: centerPoint)
         return pickerView
     }()
-    
-    private lazy var colorPreview: UIView = {
-        let preview = UIView()
-        preview.backgroundColor = .yellow
-        preview.translatesAutoresizingMaskIntoConstraints = false
-        return preview
-    }()
-    
-    private lazy var colorHexLabel: UILabel = {
-        let label = UILabel()
-        label.backgroundColor = .blue
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var colorStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.spacing = 5
-        stackView.axis = .horizontal
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    private lazy var saveButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .green
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
+
     private lazy var mediaController = UIImagePickerController()
     
+    private var pixelData: CFData?
+    private var data: UnsafePointer<UInt8>?
     private var image: UIImage? {
         didSet {
+            let centerX = view.frame.width / 2
+            let centerY = (UIScreen.main.bounds.height - navigationBarHeight - tabbarHeight) / 2
+            let centerPoint = CGPoint(x: centerX, y: centerY)
+            pickerView.lastLocation = centerPoint
+            pickerView.center = centerPoint
             pickerView.isHidden = false
             pickedColor = nil
+            pickerView.imageView = imageView
         }
     }
     
     private var pickedColor: UIColor?
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private var statusBarHeight: CGFloat {
+        return UIApplication.shared.statusBarFrame.height
     }
-    
+    private var navigationBarHeight: CGFloat {
+        return navigationController!.navigationBar.intrinsicContentSize.height
+    }
+    private var tabbarHeight: CGFloat {
+        return tabBarController!.tabBar.frame.height
+    }
+
     override func setInit() {
         mediaController.delegate = self
         pickerView.delegate = self
@@ -81,59 +66,31 @@ final class MainViewController: BaseViewController {
     
     override func setViewHierarchy() {
         super.setViewHierarchy()
-        
+        view.addSubview(defaultView)
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         imageView.bringSubviewToFront(pickerView)
-//        view.addSubview(colorPreview)
-//        view.addSubview(colorStackView)
-//        colorStackView.addArrangedSubview(colorPreview)
-//        colorStackView.addArrangedSubview(colorHexLabel)
-//        view.addSubview(saveButton)
     }
     
     override func setViewConstraint() {
         super.setViewConstraint()
         
-        let commonWidth: CGFloat = view.frame.width * .largeScale
-        // let calculatedHeight: CGFloat = view.frame.height - 60 // mainHeight - spacings
+        defaultView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+        }
         
         imageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
-
-//
-//        colorPreview.snp.makeConstraints { make in
-//            make.top.equalTo(imageView.snp.bottom).offset(50)
-//            make.leading.equalToSuperview().offset(10)
-//            make.width.height.equalTo(100)
-//        }
-        
-        
-        
-//        colorPreview.snp.makeConstraints { make in
-//            make.width.equalToSuperview().multipliedBy(0.2)
-//        }
-//
-//        colorStackView.snp.makeConstraints { make in
-//            make.width.equalTo(commonWidth)
-//            make.height.equalTo(calculatedHeight * .smallScale)
-//            make.top.equalTo(imageView.snp.bottom).offset(10)
-//            make.centerX.equalToSuperview()
-//        }
-//
-//        saveButton.snp.makeConstraints { make in
-//            make.width.equalTo(commonWidth)
-//            make.height.equalTo(calculatedHeight * .smallScale)
-//            make.top.equalTo(colorStackView.snp.bottom).offset(10)
-//            make.centerX.equalToSuperview()
-//            make.bottom.equalToSuperview().offset(-20)
-//        }
     }
     
     override func setUI() {
+        super.setUI()
+        
         let colorPreview = UIBarButtonItem(image: UIImage(systemName: "square.fill"),
                                            style: .plain,
                                            target: self,
@@ -155,9 +112,17 @@ final class MainViewController: BaseViewController {
 private extension MainViewController {
     
     @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
+        // view
+        if image == nil {
+            defaultView.removeFromSuperview()
+        }
+        
+        // authorize
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
-            self.navigateToPhotoLibrary()
+            DispatchQueue.main.async {
+                self.navigateToPhotoLibrary()
+            }
         } else if authState == .notDetermined {
             PHPhotoLibrary.requestAuthorization { [unowned self] state in
                 if state == .authorized {
@@ -192,7 +157,7 @@ private extension MainViewController {
     func showSaveAlert() {
         // TO DO: 색 hex 값으로 제목 지정
         let alert = UIAlertController(title: "색 저장",
-                                      message: "text field",
+                                      message: "hex 값 설명",
                                       preferredStyle: .alert)
         let save = UIAlertAction(title: "저장", style: .default) { action in
             let colorName = alert.textFields?[0].text
@@ -219,11 +184,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let originalImage = info[.originalImage] as? UIImage else { return }
-        if originalImage.size.width > originalImage.size.height {
-            image = originalImage.rotate(by: .pi/2)
-        } else {
-            image = originalImage
-        }
+        
+        image = originalImage
         imageView.image = image
         picker.dismiss(animated: true, completion: nil)
     }
@@ -233,8 +195,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-//        let pixelColor = image?[location]
-//        colorPreview.backgroundColor = pixelColor
+        pickedColor = imageView.colorOfPoint(point: location)
+        navigationItem.leftBarButtonItem?.tintColor = pickedColor
     }
-    
+
 }
