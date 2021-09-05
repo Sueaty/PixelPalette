@@ -8,87 +8,6 @@
 import UIKit
 import SnapKit
 import Photos
-import AVFoundation
-
-class PixelExtractor: NSObject {
-
-    let image: CGImage
-    let context: CGContext?
-
-    var width: Int {
-        get {
-            return image.width
-        }
-    }
-
-    var height: Int {
-        get {
-            return image.height
-        }
-    }
-
-
-    init(img: CGImage) {
-        image = img
-        context = PixelExtractor.createBitmapContext(img: img)
-    }
-
-    class func createBitmapContext(img: CGImage) -> CGContext {
-
-        // Get image width, height
-        let pixelsWide = img.width
-        let pixelsHigh = img.height
-
-        let bitmapBytesPerRow = pixelsWide * 4
-        let bitmapByteCount = bitmapBytesPerRow * Int(pixelsHigh)
-
-        // Use the generic RGB color space.
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-
-        // Allocate memory for image data. This is the destination in memory
-        // where any drawing to the bitmap context will be rendered.
-        let bitmapData = malloc(bitmapByteCount)
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
-        let size = CGSize(width: CGFloat(pixelsWide), height: CGFloat(pixelsHigh))
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        // create bitmap
-        let context = CGContext(data: bitmapData,
-                                width: pixelsWide,
-                                height: pixelsHigh,
-                                bitsPerComponent: 8,
-                                bytesPerRow: bitmapBytesPerRow,
-                                space: colorSpace,
-                                bitmapInfo: bitmapInfo.rawValue)
-
-        // draw the image onto the context
-        let rect = CGRect(x: 0, y: 0, width: pixelsWide, height: pixelsHigh)
-
-        context?.draw(img, in: rect)
-
-        return context!
-    }
-
-    func colorAt(x: CGFloat, y: CGFloat) -> UIColor {
-
-        guard let pixelBuffer = context?.data else { return .white }
-        let data = pixelBuffer.bindMemory(to: UInt8.self, capacity: width * height)
-
-        let offset: Int = Int(4 * (y * CGFloat(width) + x))
-
-        let alpha: UInt8 = data[offset]
-        let red: UInt8 = data[offset+1]
-        let green: UInt8 = data[offset+2]
-        let blue: UInt8 = data[offset+3]
-
-        
-        let color = UIColor(red: CGFloat(red)/255.0,
-                            green: CGFloat(green)/255.0,
-                            blue: CGFloat(blue)/255.0,
-                            alpha: CGFloat(alpha)/255.0)
-
-        return color
-    }
-}
 
 final class MainViewController: BaseViewController {
     
@@ -114,22 +33,17 @@ final class MainViewController: BaseViewController {
 
     private lazy var mediaController = UIImagePickerController()
     
-    private var extractor: PixelExtractor?
     private var pixelData: CFData?
     private var data: UnsafePointer<UInt8>?
     private var image: UIImage? {
         didSet {
             let centerX = view.frame.width / 2
             let centerY = (UIScreen.main.bounds.height - navigationBarHeight - tabbarHeight) / 2
-            print(centerY)
             let centerPoint = CGPoint(x: centerX, y: centerY)
             pickerView.lastLocation = centerPoint
             pickerView.center = centerPoint
-            
             pickerView.isHidden = false
             pickedColor = nil
-            extractor = PixelExtractor(img: (image?.cgImage)!)
-            
             pickerView.imageView = imageView
         }
     }
@@ -206,7 +120,9 @@ private extension MainViewController {
         // authorize
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
-            self.navigateToPhotoLibrary()
+            DispatchQueue.main.async {
+                self.navigateToPhotoLibrary()
+            }
         } else if authState == .notDetermined {
             PHPhotoLibrary.requestAuthorization { [unowned self] state in
                 if state == .authorized {
@@ -241,7 +157,7 @@ private extension MainViewController {
     func showSaveAlert() {
         // TO DO: 색 hex 값으로 제목 지정
         let alert = UIAlertController(title: "색 저장",
-                                      message: "text field",
+                                      message: "hex 값 설명",
                                       preferredStyle: .alert)
         let save = UIAlertAction(title: "저장", style: .default) { action in
             let colorName = alert.textFields?[0].text
@@ -279,11 +195,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-        let x = location.x
-        let y = location.y
-        pickedColor = extractor?.colorAt(x: x, y: y)
+        pickedColor = imageView.colorOfPoint(point: location)
         navigationItem.leftBarButtonItem?.tintColor = pickedColor
-        
     }
 
 }

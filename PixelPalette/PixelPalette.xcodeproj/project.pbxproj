@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		806FFCE526E50A2300BA158A /* UIView+color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806FFCE426E50A2300BA158A /* UIView+color.swift */; };
+		80A4880E26DEE9E8005CCE78 /* UIImageView+ContentClippingRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A4880D26DEE9E8005CCE78 /* UIImageView+ContentClippingRect.swift */; };
 		80BE016C26D384BE00491F47 /* DefaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BE016B26D384BE00491F47 /* DefaultView.swift */; };
 		80BE016F26D3854200491F47 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BE016E26D3854200491F47 /* BaseView.swift */; };
 		80F2084026B17DCC00E35BB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F2083F26B17DCC00E35BB1 /* AppDelegate.swift */; };
@@ -25,6 +27,8 @@
 /* Begin PBXFileReference section */
 		0AD89032750BAB6CB063752E /* Pods-PixelPalette.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PixelPalette.release.xcconfig"; path = "Target Support Files/Pods-PixelPalette/Pods-PixelPalette.release.xcconfig"; sourceTree = "<group>"; };
 		46CC2B2BAFA6893798AC24B5 /* Pods-PixelPalette.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PixelPalette.debug.xcconfig"; path = "Target Support Files/Pods-PixelPalette/Pods-PixelPalette.debug.xcconfig"; sourceTree = "<group>"; };
+		806FFCE426E50A2300BA158A /* UIView+color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+color.swift"; sourceTree = "<group>"; };
+		80A4880D26DEE9E8005CCE78 /* UIImageView+ContentClippingRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+ContentClippingRect.swift"; sourceTree = "<group>"; };
 		80BE016B26D384BE00491F47 /* DefaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultView.swift; sourceTree = "<group>"; };
 		80BE016E26D3854200491F47 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		80F2083C26B17DCC00E35BB1 /* PixelPalette.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPalette.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,6 +124,8 @@
 		80F2086626B6988B00E35BB1 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				80A4880D26DEE9E8005CCE78 /* UIImageView+ContentClippingRect.swift */,
+				806FFCE426E50A2300BA158A /* UIView+color.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -249,8 +255,10 @@
 			files = (
 				80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */,
 				80BE016F26D3854200491F47 /* BaseView.swift in Sources */,
+				806FFCE526E50A2300BA158A /* UIView+color.swift in Sources */,
 				80F2087D26BFF84200E35BB1 /* LibraryViewController.swift in Sources */,
 				80F2084026B17DCC00E35BB1 /* AppDelegate.swift in Sources */,
+				80A4880E26DEE9E8005CCE78 /* UIImageView+ContentClippingRect.swift in Sources */,
 				80F2087526B7E4F300E35BB1 /* ColorPickerView.swift in Sources */,
 				80F2084A26B17DCC00E35BB1 /* PixelPalette.xcdatamodeld in Sources */,
 				80BE016C26D384BE00491F47 /* DefaultView.swift in Sources */,
