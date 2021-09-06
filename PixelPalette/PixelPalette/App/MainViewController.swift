@@ -160,7 +160,12 @@ private extension MainViewController {
                                       message: nil,
                                       preferredStyle: .alert)
         let save = UIAlertAction(title: "저장", style: .default) { action in
-            let colorName = alert.textFields?[0].text
+            guard let colorName = alert.textFields?[0].text else {
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.warning)
+                return
+            }
+            
             // TO DO : 비어 있다면 저장 안 시켜야지 (진동 가능?)
             print("저장할 색 : \(colorHexValue) -- \(colorName)")
             // save color
