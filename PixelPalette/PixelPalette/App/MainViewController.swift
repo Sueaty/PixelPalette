@@ -155,16 +155,23 @@ private extension MainViewController {
     }
     
     func showSaveAlert() {
-        // TO DO: 색 hex 값으로 제목 지정
-        let alert = UIAlertController(title: "색 저장",
-                                      message: "hex 값 설명",
+        let colorHexValue = pickedColor?.toHexString().uppercased()
+        let alert = UIAlertController(title: colorHexValue ?? "색 지정",
+                                      message: nil,
                                       preferredStyle: .alert)
         let save = UIAlertAction(title: "저장", style: .default) { action in
             let colorName = alert.textFields?[0].text
+            // TO DO : 비어 있다면 저장 안 시켜야지 (진동 가능?)
+            print("저장할 색 : \(colorHexValue) -- \(colorName)")
             // save color
         }
         
+        let cancel = UIAlertAction(title: "취소",
+                                   style: .cancel)
+        
         alert.addAction(save)
+        alert.addAction(cancel)
+        
         alert.addTextField { textField in
             textField.placeholder = "당신의 색 이름을 정해주세요"
         }
