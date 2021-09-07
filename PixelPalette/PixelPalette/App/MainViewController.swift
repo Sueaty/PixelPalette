@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import SnapKit
 import Photos
+import SnapKit
+import CoreData
 
 final class MainViewController: BaseViewController {
     
@@ -159,20 +160,19 @@ private extension MainViewController {
         let alert = UIAlertController(title: colorHexValue ?? "색 지정",
                                       message: nil,
                                       preferredStyle: .alert)
-        let save = UIAlertAction(title: "저장", style: .default) { action in
-            guard let colorName = alert.textFields?[0].text else {
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        let save = UIAlertAction(title: "저장", style: .default) { [weak self] action in
+            guard let self = self,
+                  let colorName = alert.textFields?[0].text else {
+                // 이거 진짜 진동 되는것인가...?
                 let generator = UINotificationFeedbackGenerator()
                 generator.notificationOccurred(.warning)
                 return
             }
             
-            // TO DO : 비어 있다면 저장 안 시켜야지 (진동 가능?)
-            print("저장할 색 : \(colorHexValue) -- \(colorName)")
-            // save color
+            // save color to core data
+            self.saveColor(name: colorName, hex: colorHexValue!)
         }
-        
-        let cancel = UIAlertAction(title: "취소",
-                                   style: .cancel)
         
         alert.addAction(save)
         alert.addAction(cancel)
@@ -181,6 +181,25 @@ private extension MainViewController {
             textField.placeholder = "당신의 색 이름을 정해주세요"
         }
         present(alert, animated: false, completion: nil)
+    }
+    
+    func saveColor(name: String, hex: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "Color",
+                                                in: managedContext)!
+        let color = NSManagedObject(entity: entity,
+                                    insertInto: managedContext)
+        color.setValue(name, forKey: "name")
+        color.setValue(hex, forKey: "hexValue")
+        
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Failed to save : \(error) \(error.userInfo)")
+        }
     }
     
 }
