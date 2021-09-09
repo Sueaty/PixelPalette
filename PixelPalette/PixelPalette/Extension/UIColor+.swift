@@ -19,4 +19,10 @@ extension UIColor {
         return String(format:"#%06x", rgb)
     }
     
+    var isLight: Bool {
+        var white: CGFloat = 0
+        getWhite(&white, alpha: nil)
+        return white > 0.5
+    }
+    
 }

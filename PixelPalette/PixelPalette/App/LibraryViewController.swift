@@ -8,27 +8,47 @@
 import UIKit
 import CoreData
 
-//struct Color {
-//    let name: String
-//    let hexValue: String
-//}
-
 final class LibraryViewController: BaseViewController {
+    
     // MARK:- Views
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Palette"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private lazy var defaultView: DefaultView = {
         let view = DefaultView(frame: .zero,
                                type: .Library)
-        view.isHidden = false
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let flowlayout = UICollectionViewFlowLayout()
+        flowlayout.scrollDirection = .vertical
+        flowlayout.minimumLineSpacing = 0
+        flowlayout.minimumInteritemSpacing = 0
+        
+        let collectionView = UICollectionView(frame: .zero,
+                                              collectionViewLayout: flowlayout)
+        collectionView.showsVerticalScrollIndicator = true
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        // register cell
+        return collectionView
+    }()
+    
     // MARK:- Properties
-    var colors = [NSManagedObject]()
+    var colors = [NSManagedObject]() 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         fetchPalette()
+        if !colors.isEmpty {
+            defaultView.removeFromSuperview()
+        }
     }
 
     // MARK:- View Life Cycle
@@ -70,5 +90,25 @@ private extension LibraryViewController {
             print("Failed to fetch. \(error) \(error.userInfo)")
         }
     }
+    
+}
+
+extension LibraryViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return colors.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        <#code#>
+    }
+    
+}
+
+extension LibraryViewController: UICollectionViewDelegate {
+    
+}
+
+extension LibraryViewController: UICollectionViewDelegateFlowLayout {
     
 }
