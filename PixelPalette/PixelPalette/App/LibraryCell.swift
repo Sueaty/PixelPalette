@@ -12,7 +12,7 @@ final class LibraryCell: UICollectionViewCell {
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.textColor = .black
         return label
     }()
@@ -20,7 +20,7 @@ final class LibraryCell: UICollectionViewCell {
     private lazy var hexLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = .white
         return label
     }()
@@ -28,7 +28,7 @@ final class LibraryCell: UICollectionViewCell {
     private lazy var labelStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 0
+        stackView.spacing = 3
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -36,13 +36,16 @@ final class LibraryCell: UICollectionViewCell {
     
     // MARK:- Properties
     static let identifier = String(describing: LibraryCell.self)
+    var color: PaletteColor?
     
     // MARK:- Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        contentView.layer.cornerRadius = 15
         setViewHierarchy()
         setViewConstraints()
+        setUI()
     }
     
     required init?(coder: NSCoder) {
@@ -50,17 +53,17 @@ final class LibraryCell: UICollectionViewCell {
     }
     
     // MARK:- Update Cycle
-    // setNeedsLayout() { setUI() }
+    override func setNeedsLayout() {
+        setUI()
+    }
     
     func compose(data: Any?) {
         guard let color = data as? PaletteColor else { return }
-        contentView.backgroundColor = color.color
-        if color.color.isLight {
-            hexLabel.backgroundColor = .black
-        } else {
-            nameLabel.backgroundColor = .white
-        }
+        let uicolor = UIColor.init(hexString: color.hex)
+        self.color = color
+        self.color?.color = uicolor
         
+        contentView.backgroundColor = uicolor
         nameLabel.text = color.name
         hexLabel.text = color.hex
     }
@@ -77,22 +80,25 @@ private extension LibraryCell {
     func setViewConstraints() {
         labelStackView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
             make.bottom.equalToSuperview().offset(-10)
         }
     }
     
+    func setUI() {
+        guard let color = color?.color else { return }
+        let whiteHighlight = [NSAttributedString.Key.backgroundColor: UIColor.white]
+        let blackHighlight = [NSAttributedString.Key.backgroundColor: UIColor.black]
+        if color.isLight {
+            let attributedString = NSAttributedString(string: hexLabel.text ?? "",
+                                                      attributes: blackHighlight)
+            
+            hexLabel.attributedText = attributedString
+        } else {
+            let attributedString = NSAttributedString(string: nameLabel.text ?? "",
+                                                      attributes: whiteHighlight)
+            nameLabel.attributedText = attributedString
+        }
+    }
+    
 }
-
-//extension RecommendedRestaurantSingleCell {
-//
-//    func setUI() {
-//        let attributedString = NSMutableAttributedString(string: customerReview.text ?? "")
-//        let paragraphStyle = NSMutableParagraphStyle()
-//        paragraphStyle.lineSpacing = 5
-//        paragraphStyle.lineBreakMode = .byTruncatingTail
-//        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle,
-//                                      value: paragraphStyle,
-//                                      range: NSMakeRange(0, attributedString.length))
-//        customerReview.attributedText = attributedString
-//    }
-//
