@@ -10,15 +10,7 @@ import CoreData
 
 final class LibraryViewController: BaseViewController {
     
-    // MARK:- Views
-//    private lazy var titleLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "Palette"
-//        label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }()
-    
+    // MARK:- Views    
     private lazy var defaultView: DefaultView = {
         let view = DefaultView(frame: .zero,
                                type: .Library)
@@ -71,7 +63,6 @@ final class LibraryViewController: BaseViewController {
     override func setViewHierarchy() {
         super.setViewHierarchy()
         
-//        view.addSubview(titleLabel)
         view.addSubview(defaultView)
         view.addSubview(collectionView)
     }

@@ -12,7 +12,42 @@ import CoreData
 
 final class MainViewController: BaseViewController {
     
-    private lazy var defaultView: DefaultView = {
+    // MARK:- Views
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Picker"
+        label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var saveButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("S A V E", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.addTarget(self, action: #selector(savePickedColor(_:)), for: .touchUpInside)
+        button.titleLabel?.textColor = .black
+        button.layer.cornerRadius = 5
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.black.cgColor
+        button.backgroundColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private lazy var imageLoadButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+        button.addTarget(self, action: #selector(didTapPhotosButton(_:)), for: .touchUpInside)
+        button.contentVerticalAlignment = .fill
+        button.contentHorizontalAlignment = .fill
+        button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 1, bottom: 5, right: 1)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private lazy var defaultView: DefaultView? = {
         let view = DefaultView(frame: .zero, type: .Picker)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -21,25 +56,22 @@ final class MainViewController: BaseViewController {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
+
     private lazy var pickerView: ColorPickerView = {
         let pickerView = ColorPickerView()
         return pickerView
     }()
-
-    private lazy var mediaController = UIImagePickerController()
     
-    private var pixelData: CFData?
-    private var data: UnsafePointer<UInt8>?
+    // MARK:- Properties
+    private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
             let centerX = view.frame.width / 2
-            let centerY = (UIScreen.main.bounds.height - navigationBarHeight - tabbarHeight) / 2
+            let centerY = (UIScreen.main.bounds.height - tabbarHeight) / 2
             let centerPoint = CGPoint(x: centerX, y: centerY)
             pickerView.lastLocation = centerPoint
             pickerView.center = centerPoint
@@ -51,23 +83,31 @@ final class MainViewController: BaseViewController {
     
     private var pickedColor: UIColor?
     private var statusBarHeight: CGFloat {
-        return UIApplication.shared.statusBarFrame.height
-    }
-    private var navigationBarHeight: CGFloat {
-        return navigationController!.navigationBar.intrinsicContentSize.height
+        return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
     }
     private var tabbarHeight: CGFloat {
         return tabBarController!.tabBar.frame.height
     }
-
-    override func setInit() {
+    
+    // MARK:- View Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         mediaController.delegate = self
         pickerView.delegate = self
+    }
+
+    // MARK:- Override Functions
+    override func setInit() {
+        
     }
     
     override func setViewHierarchy() {
         super.setViewHierarchy()
-        view.addSubview(defaultView)
+        view.addSubview(titleLabel)
+        view.addSubview(saveButton)
+        view.addSubview(imageLoadButton)
+        view.addSubview(defaultView!)
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         imageView.bringSubviewToFront(pickerView)
@@ -76,14 +116,33 @@ final class MainViewController: BaseViewController {
     override func setViewConstraint() {
         super.setViewConstraint()
         
-        defaultView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+            make.leading.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-15)
+        }
+
+        imageLoadButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            make.height.width.equalTo(45)
+            make.trailing.equalToSuperview().offset(-15)
+        }
+
+        saveButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            make.height.equalTo(45)
+            make.width.equalTo(130)
+            make.trailing.equalTo(imageLoadButton.snp.leading).offset(-15)
+        }
+        
+        defaultView!.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
-        
+
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
@@ -92,33 +151,13 @@ final class MainViewController: BaseViewController {
     override func setUI() {
         super.setUI()
         
-        let colorPreview = UIBarButtonItem(image: UIImage(systemName: "square.fill"),
-                                           style: .plain,
-                                           target: self,
-                                           action: #selector(savePickedColor(_:)))
-        colorPreview.tintColor = .lightGray
-        
-        let photosButton = UIBarButtonItem(image: UIImage(systemName: "photo.on.rectangle.angled"),
-                                           style: .plain,
-                                           target: self,
-                                           action: #selector(didTapPhotosButton(_:)))
-        
-        navigationItem.leftBarButtonItem = colorPreview
-        navigationItem.rightBarButtonItem = photosButton
-        navigationItem.title = "Pixel Palette"
     }
 
 }
 
 private extension MainViewController {
-    
-    @objc func didTapPhotosButton(_ sender: UIBarButtonItem) {
-        // view
-        if image == nil {
-            defaultView.removeFromSuperview()
-        }
-        
-        // authorize
+
+    @objc func didTapPhotosButton(_ sender: UIButton) {
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
             DispatchQueue.main.async {
@@ -135,7 +174,7 @@ private extension MainViewController {
         }
     }
     
-    @objc func savePickedColor(_ sender: UIBarButtonItem) {
+    @objc func savePickedColor(_ sender: UIButton) {
         if pickedColor != nil { showSaveAlert() }
     }
     
@@ -214,8 +253,8 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        defaultView?.removeFromSuperview()
         guard let originalImage = info[.originalImage] as? UIImage else { return }
-        
         image = originalImage
         imageView.image = image
         picker.dismiss(animated: true, completion: nil)
@@ -227,7 +266,8 @@ extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
         pickedColor = imageView.colorOfPoint(point: location)
-        navigationItem.leftBarButtonItem?.tintColor = pickedColor
+        saveButton.backgroundColor = pickedColor
+        saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
 
 }
