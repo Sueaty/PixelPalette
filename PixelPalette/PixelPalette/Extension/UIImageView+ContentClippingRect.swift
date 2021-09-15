@@ -8,11 +8,12 @@
 import UIKit
 
 extension UIImageView {
+    
     var contentClippingRect: CGRect {
-        guard let image = image else { return bounds }
-        guard contentMode == .scaleAspectFit else { return bounds }
-        guard image.size.width > 0 && image.size.height > 0 else { return bounds }
-
+        guard let image = image,
+              contentMode == .scaleAspectFit,
+              image.size.width > 0 && image.size.height > 0 else { return bounds }
+        
         let scale: CGFloat
         scale = frame.width / image.size.width
 

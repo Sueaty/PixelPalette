@@ -56,20 +56,19 @@ private extension ColorPickerView {
             layer.cornerRadius = 7
         }
 
-        guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
         
         let minCenterX = frame.size.width / 2
-        let maxCenterX = superview.frame.width - frame.size.width / 2
+        let maxCenterX = imageView.frame.width - frame.size.width / 2
         let newCenterX = center.x + translation.x
-        
-        let minCenterY = 342.5 - imageView.contentClippingRect.height/2 - frame.size.height
-        let maxCenterY = 342.5 + imageView.contentClippingRect.height/2 - frame.size.height
+
+        let minCenterY = imageView.frame.minY - frame.size.height / 2
+        let maxCenterY = imageView.frame.maxY + frame.size.height / 2
         let newCenterY = center.y + translation.y
 
         center.x = min(maxCenterX, max(minCenterX, newCenterX))
         center.y = min(maxCenterY, max(minCenterY, newCenterY))
-        
+
         sender.setTranslation(.zero, in: self)
         delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
                                                                        y: center.y))
