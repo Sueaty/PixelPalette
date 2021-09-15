@@ -53,11 +53,25 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
+    private lazy var imageScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.frame = CGRect(origin: .zero,
+                                  size: view.frame.size)
+        scrollView.contentSize = imageView.frame.size
+        scrollView.bounces = false
+        scrollView.clipsToBounds = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
@@ -78,9 +92,15 @@ final class MainViewController: BaseViewController {
             pickerView.isHidden = false
             pickedColor = nil
             pickerView.imageView = imageView
+
+            imageView.snp.makeConstraints { make in
+                make.width.equalTo(imageScrollView.frameLayoutGuide.snp.height)
+                    .multipliedBy(image!.size.width / image!.size.height)
+                    .priority(999)
+            }
         }
     }
-    
+
     private var pickedColor: UIColor?
     private var statusBarHeight: CGFloat {
         return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
@@ -88,29 +108,27 @@ final class MainViewController: BaseViewController {
     private var tabbarHeight: CGFloat {
         return tabBarController!.tabBar.frame.height
     }
-    
-    // MARK:- View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        mediaController.delegate = self
-        pickerView.delegate = self
-    }
 
     // MARK:- Override Functions
     override func setInit() {
+        super.setInit()
         
+        mediaController.delegate = self
+        imageScrollView.delegate = self
+        pickerView.delegate = self
     }
     
     override func setViewHierarchy() {
         super.setViewHierarchy()
+        
         view.addSubview(titleLabel)
         view.addSubview(saveButton)
         view.addSubview(imageLoadButton)
         view.addSubview(defaultView!)
-        view.addSubview(imageView)
-        imageView.addSubview(pickerView)
-        imageView.bringSubviewToFront(pickerView)
+        view.addSubview(imageScrollView)
+        imageScrollView.addSubview(imageView)
+        imageScrollView.addSubview(pickerView)
+        imageScrollView.bringSubviewToFront(pickerView)
     }
     
     override func setViewConstraint() {
@@ -123,15 +141,15 @@ final class MainViewController: BaseViewController {
         }
 
         imageLoadButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
             make.height.width.equalTo(45)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
             make.trailing.equalToSuperview().offset(-15)
         }
 
         saveButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
             make.height.equalTo(45)
             make.width.equalTo(130)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
             make.trailing.equalTo(imageLoadButton.snp.leading).offset(-15)
         }
         
@@ -141,10 +159,20 @@ final class MainViewController: BaseViewController {
             make.leading.trailing.equalToSuperview()
         }
 
-        imageView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+        imageScrollView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            make.leading.trailing.equalToSuperview()
+            make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
+            make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
+        }
+        
+        imageView.snp.makeConstraints { make in
+            make.top.equalTo(imageScrollView.contentLayoutGuide.snp.top)
+            make.bottom.equalTo(imageScrollView.contentLayoutGuide.snp.bottom)
+            make.leading.equalTo(imageScrollView.contentLayoutGuide.snp.leading)
+            make.trailing.equalTo(imageScrollView.contentLayoutGuide.snp.trailing)
+            
+            make.height.equalTo(imageScrollView.frameLayoutGuide.snp.height)
         }
     }
     
@@ -152,7 +180,7 @@ final class MainViewController: BaseViewController {
         super.setUI()
         
     }
-
+    
 }
 
 private extension MainViewController {
@@ -262,10 +290,15 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     
 }
 
+extension MainViewController: UIScrollViewDelegate {
+    
+}
+
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
         pickedColor = imageView.colorOfPoint(point: location)
+        pickerView.layer.borderColor = pickedColor!.isLight ? UIColor.black.cgColor : UIColor.white.cgColor
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
