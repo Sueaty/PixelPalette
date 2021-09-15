@@ -81,6 +81,7 @@ final class MainViewController: BaseViewController {
     }()
     
     // MARK:- Properties
+    private var imageViewWidthConstraint: Constraint?
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
@@ -93,14 +94,17 @@ final class MainViewController: BaseViewController {
             pickedColor = nil
             pickerView.imageView = imageView
 
+            let viewHeight = imageScrollView.frame.height
+            let imageHeight = image!.size.height
+            let imageWidth = image!.size.width
+            let increaseRatio = viewHeight / imageHeight
+            
             imageView.snp.makeConstraints { make in
-                make.width.equalTo(imageScrollView.frameLayoutGuide.snp.height)
-                    .multipliedBy(image!.size.width / image!.size.height)
+                make.width.equalTo(imageWidth * increaseRatio)
                     .priority(999)
             }
         }
     }
-
     private var pickedColor: UIColor?
     private var statusBarHeight: CGFloat {
         return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
