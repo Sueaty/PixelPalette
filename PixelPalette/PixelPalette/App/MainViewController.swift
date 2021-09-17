@@ -85,6 +85,7 @@ final class MainViewController: BaseViewController {
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
+            scrollToBeginning()
             resetImageViewConstraint()
             resetPicker()
         }
@@ -191,6 +192,11 @@ private extension MainViewController {
     
     @objc func savePickedColor(_ sender: UIButton) {
         if pickedColor != nil { showSaveAlert() }
+    }
+    
+    func scrollToBeginning() {
+        let leftContentOffset = CGPoint(x: -imageScrollView.contentInset.left, y: 0)
+        imageScrollView.setContentOffset(leftContentOffset, animated: true)
     }
     
     func resetPicker() {
