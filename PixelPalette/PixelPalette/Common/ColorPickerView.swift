@@ -24,10 +24,10 @@ final class ColorPickerView: UIView {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panColorPicker(_:)))
         addGestureRecognizer(panGestureRecognizer)
         
-        bounds.size = CGSize(width: 16, height: 16)
+        bounds.size = CGSize(width: 20, height: 20)
         
-        layer.borderWidth = 3
-        layer.cornerRadius = 8
+        layer.borderWidth = 4
+        layer.cornerRadius = 10
         layer.isOpaque = false
         layer.borderColor = UIColor.black.cgColor
         layer.backgroundColor = UIColor.clear.cgColor
@@ -55,11 +55,11 @@ private extension ColorPickerView {
     
     func adjustPickerViewSize(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || sender.state == .changed {
+            bounds.size = CGSize(width: 26, height: 26)
+            layer.cornerRadius = 13
+        } else if sender.state == .ended {
             bounds.size = CGSize(width: 20, height: 20)
             layer.cornerRadius = 10
-        } else if sender.state == .ended {
-            bounds.size = CGSize(width: 14, height: 14)
-            layer.cornerRadius = 7
         }
     }
     
