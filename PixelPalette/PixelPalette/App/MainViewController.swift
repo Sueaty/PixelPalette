@@ -61,7 +61,7 @@ final class MainViewController: BaseViewController {
         scrollView.bounces = false
         scrollView.clipsToBounds = true
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -85,27 +85,16 @@ final class MainViewController: BaseViewController {
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
-            let centerX = view.frame.width / 2
-            let centerY = (UIScreen.main.bounds.height - tabbarHeight) / 2
-            let centerPoint = CGPoint(x: centerX, y: centerY)
-            pickerView.lastLocation = centerPoint
-            pickerView.center = centerPoint
-            pickerView.isHidden = false
-            pickedColor = nil
-            pickerView.imageView = imageView
-
-            let viewHeight = imageScrollView.frame.height
-            let imageHeight = image!.size.height
-            let imageWidth = image!.size.width
-            let increaseRatio = viewHeight / imageHeight
-            
-            imageView.snp.makeConstraints { make in
-                make.width.equalTo(imageWidth * increaseRatio)
-                    .priority(999)
-            }
+            scrollToBeginning()
+            resetImageViewConstraint()
+            resetPicker()
         }
     }
-    private var pickedColor: UIColor?
+    private var pickedColor: UIColor? {
+        didSet {
+            pickerView.layer.borderColor = pickedColor!.isLight ? UIColor.black.cgColor : UIColor.white.cgColor
+        }
+    }
     private var statusBarHeight: CGFloat {
         return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
     }
@@ -179,12 +168,7 @@ final class MainViewController: BaseViewController {
             make.height.equalTo(imageScrollView.frameLayoutGuide.snp.height)
         }
     }
-    
-    override func setUI() {
-        super.setUI()
-        
-    }
-    
+
 }
 
 private extension MainViewController {
@@ -208,6 +192,35 @@ private extension MainViewController {
     
     @objc func savePickedColor(_ sender: UIButton) {
         if pickedColor != nil { showSaveAlert() }
+    }
+    
+    func scrollToBeginning() {
+        let leftContentOffset = CGPoint(x: -imageScrollView.contentInset.left, y: 0)
+        imageScrollView.setContentOffset(leftContentOffset, animated: true)
+    }
+    
+    func resetPicker() {
+        // set picker position
+        let centerPoint = CGPoint(x: imageScrollView.center.x,
+                                  y: imageScrollView.frame.size.height / 2)
+        pickerView.lastLocation = centerPoint
+        pickerView.center = centerPoint
+        pickerView.isHidden = false
+        pickerView.imageView = imageView
+        
+        // set picker's initial position color
+        pickedColor = imageView.colorOfPoint(point: centerPoint)
+    }
+    
+    func resetImageViewConstraint() {
+        let viewHeight = imageScrollView.frame.height
+        let imageHeight = image!.size.height
+        let imageWidth = image!.size.width
+        let increaseRatio = viewHeight / imageHeight
+        imageView.snp.makeConstraints { make in
+            make.width.equalTo(imageWidth * increaseRatio)
+                .priority(999)
+        }
     }
     
     func showAccessAuthAlert(title: String) {
@@ -302,7 +315,6 @@ extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
         pickedColor = imageView.colorOfPoint(point: location)
-        pickerView.layer.borderColor = pickedColor!.isLight ? UIColor.black.cgColor : UIColor.white.cgColor
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }

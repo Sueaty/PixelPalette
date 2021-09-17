@@ -24,10 +24,10 @@ final class ColorPickerView: UIView {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panColorPicker(_:)))
         addGestureRecognizer(panGestureRecognizer)
         
-        bounds.size = CGSize(width: 16, height: 16)
+        bounds.size = CGSize(width: 20, height: 20)
         
-        layer.borderWidth = 3
-        layer.cornerRadius = 8
+        layer.borderWidth = 4
+        layer.cornerRadius = 10
         layer.isOpaque = false
         layer.borderColor = UIColor.black.cgColor
         layer.backgroundColor = UIColor.clear.cgColor
@@ -48,30 +48,36 @@ final class ColorPickerView: UIView {
 private extension ColorPickerView {
     
     @objc func panColorPicker(_ sender: UIPanGestureRecognizer) {
+        adjustPickerViewSize(sender)
+        setNewCenterPosition(sender)
+        delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x, y: center.y))
+    }
+    
+    func adjustPickerViewSize(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began || sender.state == .changed {
+            bounds.size = CGSize(width: 26, height: 26)
+            layer.cornerRadius = 13
+        } else if sender.state == .ended {
             bounds.size = CGSize(width: 20, height: 20)
             layer.cornerRadius = 10
-        } else if sender.state == .ended {
-            bounds.size = CGSize(width: 14, height: 14)
-            layer.cornerRadius = 7
         }
-
+    }
+    
+    func setNewCenterPosition(_ sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: self.superview)
         
         let minCenterX = frame.size.width / 2
         let maxCenterX = imageView.frame.width - frame.size.width / 2
         let newCenterX = center.x + translation.x
 
-        let minCenterY = imageView.frame.minY - frame.size.height / 2
-        let maxCenterY = imageView.frame.maxY + frame.size.height / 2
+        let minCenterY = imageView.frame.origin.y
+        let maxCenterY = minCenterY + imageView.frame.size.height
         let newCenterY = center.y + translation.y
 
         center.x = min(maxCenterX, max(minCenterX, newCenterX))
         center.y = min(maxCenterY, max(minCenterY, newCenterY))
 
         sender.setTranslation(.zero, in: self)
-        delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x,
-                                                                       y: center.y))
     }
     
 }
