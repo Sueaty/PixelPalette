@@ -26,8 +26,8 @@ final class LibraryViewController: BaseViewController {
         
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: flowlayout)
-        collectionView.backgroundColor = .white
-        collectionView.showsVerticalScrollIndicator = true
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.register(LibraryCell.self,
@@ -39,17 +39,7 @@ final class LibraryViewController: BaseViewController {
     }()
     
     // MARK:- Properties
-    var colors = [NSManagedObject]() 
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        fetchPalette()
-        collectionView.reloadData()
-        if !colors.isEmpty {
-            defaultView.removeFromSuperview()
-        }
-    }
+    var colors = [NSManagedObject]()
 
     // MARK:- View Life Cycle
     override func viewDidLoad() {
@@ -59,7 +49,18 @@ final class LibraryViewController: BaseViewController {
         collectionView.delegate = self
     }
     
-    // MARK:- Override
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchPalette()
+        collectionView.reloadData()
+        if !colors.isEmpty {
+            defaultView.removeFromSuperview()
+        }
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    // MARK:- Override Functions
     override func setViewHierarchy() {
         super.setViewHierarchy()
         
@@ -83,7 +84,7 @@ final class LibraryViewController: BaseViewController {
             make.trailing.equalToSuperview().offset(-15)
         }
     }
-    
+
 }
 
 private extension LibraryViewController {
@@ -96,13 +97,29 @@ private extension LibraryViewController {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Color")
         
         do {
-            colors = try managedContext.fetch(fetchRequest)
-
+            let results = try managedContext.fetch(fetchRequest)
+            if results.count > 0 {
+                colors = results
+            }
         } catch let error as NSError {
             print("Failed to fetch. \(error) \(error.userInfo)")
         }
     }
     
+}
+
+extension LibraryViewController: SingleColorDelegate {
+    
+    func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
+        fetchPalette()
+        collectionView.reloadData()
+    }
+    
+    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String) {
+        fetchPalette()
+        collectionView.reloadData()
+    }
+
 }
 
 extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -127,6 +144,23 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         return UICollectionViewCell()
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let colorViewController = storyboard?.instantiateViewController(identifier: "SingleColorVC") as? SingleColorViewController else { return }
+        colorViewController.modalPresentationStyle = .automatic
+        
+        let managedColor = colors[indexPath.item]
+        let name = managedColor.value(forKey: "name") as? String
+        let hexValue = managedColor.value(forKey: "hexValue") as? String
+        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
+        let colorModel = PaletteColor(name: name ?? "undefined",
+                                      hex: hexValue ?? "#FFFFFF",
+                                      color: uicolor)
+        colorViewController.delegate = self
+        colorViewController.compose(data: colorModel)
+        
+        present(colorViewController, animated: true, completion: nil)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
@@ -138,20 +172,20 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         return UICollectionReusableView()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 20.0, left: 0, bottom: 0, right: 0)
-    }
-    
 }
 
 extension LibraryViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 50)
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: (view.frame.width - 38) / 2 , height: 150)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 50)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 20.0, left: 0, bottom: 0, right: 0)
     }
     
 }

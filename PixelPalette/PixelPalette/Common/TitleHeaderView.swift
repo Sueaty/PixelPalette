@@ -13,7 +13,6 @@ final class TitleHeaderView: UICollectionReusableView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Palette"
-        label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

@@ -8,7 +8,7 @@
 import UIKit
 
 final class LibraryCell: UICollectionViewCell {
-    // MARK:- View
+    // MARK:- Views
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -59,11 +59,12 @@ final class LibraryCell: UICollectionViewCell {
     
     func compose(data: Any?) {
         guard let color = data as? PaletteColor else { return }
+        
         let uicolor = UIColor.init(hexString: color.hex)
         self.color = color
         self.color?.color = uicolor
-        
         contentView.backgroundColor = uicolor
+        
         nameLabel.text = color.name
         hexLabel.text = color.hex
     }
