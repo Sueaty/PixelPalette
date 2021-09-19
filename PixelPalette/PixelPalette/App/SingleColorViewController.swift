@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 import CoreData
 
+protocol SingleColorDelegate {
+    func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String)
+    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String)
+}
+
 final class SingleColorViewController: BaseViewController {
     
     // MARK:- Views
@@ -139,11 +144,12 @@ final class SingleColorViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addObservers()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK:- Properties
-    var colorManagedObject: NSManagedObject?
+    var delegate: SingleColorDelegate?
     var colorModel: PaletteColor?
     var backgroundTopConstraint: Constraint?
     var context: NSManagedObjectContext {
@@ -152,16 +158,10 @@ final class SingleColorViewController: BaseViewController {
     }
     
     func compose(data: Any?) {
-        guard let managedColor = data as? NSManagedObject else { return }
-        let name = managedColor.value(forKey: "name") as? String
-        let hexValue = managedColor.value(forKey: "hexValue") as? String
-        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
-        let colorModel = PaletteColor(name: name ?? "undefined",
-                                      hex: hexValue ?? "#FFFFFF",
-                                      color: uicolor)
-        
+        guard let colorModel = data as? PaletteColor,
+              let color = colorModel.color else { return }
+       
         self.colorModel = colorModel
-        guard let color = colorModel.color else { return }
         
         if color.isLight {
             saveButton.setTitleColor(.black, for: .normal)
@@ -185,11 +185,6 @@ final class SingleColorViewController: BaseViewController {
 
 private extension SingleColorViewController {
     
-    func addObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
     @objc func didPressSaveButton(_ sender: UIButton) {
         guard let colorModel = colorModel,
               let textFieldString = nameLabelTextField.text else { return }
@@ -197,6 +192,7 @@ private extension SingleColorViewController {
         
         if nameDidChange {
             updateColorName(change: textFieldString)
+            delegate?.didEditColorName(self, didEditName: textFieldString)
         }
 
         dismiss(animated: true, completion: nil)
@@ -216,6 +212,7 @@ private extension SingleColorViewController {
             print("Failed to delete: \(error)")
         }
         
+        delegate?.didDeleteeColor(self, deletedColor: colorModel!.name)
         dismiss(animated: true, completion: nil)
     }
     

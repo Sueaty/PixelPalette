@@ -97,13 +97,29 @@ private extension LibraryViewController {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Color")
         
         do {
-            colors = try managedContext.fetch(fetchRequest)
-
+            let results = try managedContext.fetch(fetchRequest)
+            if results.count > 0 {
+                colors = results
+            }
         } catch let error as NSError {
             print("Failed to fetch. \(error) \(error.userInfo)")
         }
     }
     
+}
+
+extension LibraryViewController: SingleColorDelegate {
+    
+    func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
+        fetchPalette()
+        collectionView.reloadData()
+    }
+    
+    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String) {
+        fetchPalette()
+        collectionView.reloadData()
+    }
+
 }
 
 extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -130,10 +146,18 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let colorViewController = storyboard?.instantiateViewController(identifier: "SingleColorVC") as? SingleColorViewController else { return }
+        colorViewController.modalPresentationStyle = .automatic
         
         let managedColor = colors[indexPath.item]
-        colorViewController.modalPresentationStyle = .automatic
-        colorViewController.compose(data: managedColor)
+        let name = managedColor.value(forKey: "name") as? String
+        let hexValue = managedColor.value(forKey: "hexValue") as? String
+        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
+        let colorModel = PaletteColor(name: name ?? "undefined",
+                                      hex: hexValue ?? "#FFFFFF",
+                                      color: uicolor)
+        colorViewController.delegate = self
+        colorViewController.compose(data: colorModel)
+        
         present(colorViewController, animated: true, completion: nil)
     }
     
