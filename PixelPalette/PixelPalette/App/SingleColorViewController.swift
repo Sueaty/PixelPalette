@@ -115,7 +115,7 @@ final class SingleColorViewController: BaseViewController {
         }
         
         saveButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(10)
+            make.top.equalToSuperview().offset(5)
             make.trailing.equalToSuperview().offset(-10)
         }
         
@@ -135,6 +135,11 @@ final class SingleColorViewController: BaseViewController {
     }
     
     // MARK:- View Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        addObservers()
+    }
     
     // MARK:- Properties
     var color: PaletteColor?
@@ -158,9 +163,18 @@ final class SingleColorViewController: BaseViewController {
         let rgba = color.toRGBA()
         rgbaLabel.text = String(describing: "(\(rgba[0]), \(rgba[1]), \(rgba[2]))")
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
 }
 
 private extension SingleColorViewController {
+    
+    func addObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     @objc func didPressSaveButton(_ sender: UIButton) {
         // no change was made
@@ -170,5 +184,21 @@ private extension SingleColorViewController {
     
     @objc func didPressDeleteButton(_ sender: UIButton) {
         // delete from core data
+    }
+    
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        backgroundTopConstraint?.deactivate()
+        backgroundView.snp.makeConstraints { make in
+            backgroundTopConstraint = make.top.equalToSuperview().offset(10).constraint
+        }
+        backgroundTopConstraint?.activate()
+    }
+    
+    @objc private func keyboardWillHide(_ notification: NSNotification) {
+        backgroundTopConstraint?.deactivate()
+        backgroundView.snp.makeConstraints { make in
+            backgroundTopConstraint = make.centerY.equalToSuperview().constraint
+        }
+        backgroundTopConstraint?.activate()
     }
 }
