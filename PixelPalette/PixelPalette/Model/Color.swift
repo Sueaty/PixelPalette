@@ -8,7 +8,7 @@
 import UIKit
 
 struct PaletteColor {
-    let name: String
+    var name: String
     let hex: String
     var color: UIColor?
 }

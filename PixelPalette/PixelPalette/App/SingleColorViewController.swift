@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 final class SingleColorViewController: BaseViewController {
     
@@ -68,7 +69,7 @@ final class SingleColorViewController: BaseViewController {
         let button = UIButton()
         button.setTitle("Delete", for: .normal)
         button.setTitleColor(.red, for: .normal)
-        button.backgroundColor = .lightGray
+        button.backgroundColor = .lightGray.withAlphaComponent(0.9)
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(didPressDeleteButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -142,12 +143,25 @@ final class SingleColorViewController: BaseViewController {
     }
     
     // MARK:- Properties
-    var color: PaletteColor?
+    var colorManagedObject: NSManagedObject?
+    var colorModel: PaletteColor?
     var backgroundTopConstraint: Constraint?
+    var context: NSManagedObjectContext {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
+    }
     
     func compose(data: Any?) {
-        guard let colorModel = data as? PaletteColor,
-              let color = colorModel.color else { return }
+        guard let managedColor = data as? NSManagedObject else { return }
+        let name = managedColor.value(forKey: "name") as? String
+        let hexValue = managedColor.value(forKey: "hexValue") as? String
+        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
+        let colorModel = PaletteColor(name: name ?? "undefined",
+                                      hex: hexValue ?? "#FFFFFF",
+                                      color: uicolor)
+        
+        self.colorModel = colorModel
+        guard let color = colorModel.color else { return }
         
         if color.isLight {
             saveButton.setTitleColor(.black, for: .normal)
@@ -177,13 +191,32 @@ private extension SingleColorViewController {
     }
     
     @objc func didPressSaveButton(_ sender: UIButton) {
-        // no change was made
+        guard let colorModel = colorModel,
+              let textFieldString = nameLabelTextField.text else { return }
+        let nameDidChange = colorModel.name != textFieldString
         
-        // name edited
+        if nameDidChange {
+            updateColorName(change: textFieldString)
+        }
+
+        dismiss(animated: true, completion: nil)
     }
     
     @objc func didPressDeleteButton(_ sender: UIButton) {
         // delete from core data
+        let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
+        fetchColor.predicate = NSPredicate(format: "name = %@", colorModel!.name as String)
+        let result = try? context.fetch(fetchColor)
+        let color: Color! = result?.first
+        context.delete(color)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to delete: \(error)")
+        }
+        
+        dismiss(animated: true, completion: nil)
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -201,4 +234,21 @@ private extension SingleColorViewController {
         }
         backgroundTopConstraint?.activate()
     }
+    
+    func updateColorName(change name: String) {
+        // update from  Core Data
+        let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
+        fetchColor.predicate = NSPredicate(format: "name = %@", colorModel!.name as String)
+        
+        let result = try? context.fetch(fetchColor)
+        let color: Color! = result?.first
+        
+        color.name = name
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save: \(error)")
+        }
+    }
+
 }

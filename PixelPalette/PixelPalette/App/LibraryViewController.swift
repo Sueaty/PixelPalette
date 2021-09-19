@@ -60,7 +60,7 @@ final class LibraryViewController: BaseViewController {
         navigationController?.navigationBar.isHidden = true
     }
     
-    // MARK:- Override
+    // MARK:- Override Functions
     override func setViewHierarchy() {
         super.setViewHierarchy()
         
@@ -129,18 +129,11 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let managedColor = colors[indexPath.item]
-        let name = managedColor.value(forKey: "name") as? String
-        let hexValue = managedColor.value(forKey: "hexValue") as? String
-        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
-        let color = PaletteColor(name: name ?? "undefined",
-                                 hex: hexValue ?? "#FFFFFF",
-                                 color: uicolor)
-        
-        
         guard let colorViewController = storyboard?.instantiateViewController(identifier: "SingleColorVC") as? SingleColorViewController else { return }
+        
+        let managedColor = colors[indexPath.item]
         colorViewController.modalPresentationStyle = .automatic
-        colorViewController.compose(data: color)
+        colorViewController.compose(data: managedColor)
         present(colorViewController, animated: true, completion: nil)
     }
     
