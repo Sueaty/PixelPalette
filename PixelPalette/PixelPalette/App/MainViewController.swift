@@ -176,9 +176,7 @@ private extension MainViewController {
     @objc func didTapPhotosButton(_ sender: UIButton) {
         let authState = PHPhotoLibrary.authorizationStatus()
         if authState == .authorized {
-            DispatchQueue.main.async {
-                self.navigateToPhotoLibrary()
-            }
+            self.navigateToPhotoLibrary()
         } else if authState == .notDetermined {
             PHPhotoLibrary.requestAuthorization { [unowned self] state in
                 if state == .authorized {
@@ -291,17 +289,22 @@ private extension MainViewController {
 extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     func navigateToPhotoLibrary() {
-        mediaController.sourceType = .photoLibrary
-        mediaController.allowsEditing = false
-        present(mediaController, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.mediaController.sourceType = .photoLibrary
+            self.mediaController.allowsEditing = false
+            self.present(self.mediaController, animated: true)
+        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         defaultView?.removeFromSuperview()
+        
         guard let originalImage = info[.originalImage] as? UIImage else { return }
         image = originalImage
         imageView.image = image
+        
         picker.dismiss(animated: true, completion: nil)
     }
     

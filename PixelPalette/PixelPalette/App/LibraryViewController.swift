@@ -26,8 +26,8 @@ final class LibraryViewController: BaseViewController {
         
         let collectionView = UICollectionView(frame: .zero,
                                               collectionViewLayout: flowlayout)
-        collectionView.backgroundColor = .white
-        collectionView.showsVerticalScrollIndicator = true
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.register(LibraryCell.self,
@@ -39,7 +39,15 @@ final class LibraryViewController: BaseViewController {
     }()
     
     // MARK:- Properties
-    var colors = [NSManagedObject]() 
+    var colors = [NSManagedObject]()
+
+    // MARK:- View Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -49,14 +57,7 @@ final class LibraryViewController: BaseViewController {
         if !colors.isEmpty {
             defaultView.removeFromSuperview()
         }
-    }
-
-    // MARK:- View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        navigationController?.navigationBar.isHidden = true
     }
     
     // MARK:- Override
@@ -83,7 +84,7 @@ final class LibraryViewController: BaseViewController {
             make.trailing.equalToSuperview().offset(-15)
         }
     }
-    
+
 }
 
 private extension LibraryViewController {
@@ -127,6 +128,22 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         return UICollectionViewCell()
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let managedColor = colors[indexPath.item]
+        let name = managedColor.value(forKey: "name") as? String
+        let hexValue = managedColor.value(forKey: "hexValue") as? String
+        let uicolor = UIColor.init(hexString: hexValue ?? "#FFFFFF")
+        let color = PaletteColor(name: name ?? "undefined",
+                                 hex: hexValue ?? "#FFFFFF",
+                                 color: uicolor)
+        
+        
+        guard let colorViewController = storyboard?.instantiateViewController(identifier: "SingleColorVC") as? SingleColorViewController else { return }
+        colorViewController.modalPresentationStyle = .automatic
+        colorViewController.compose(data: color)
+        present(colorViewController, animated: true, completion: nil)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
@@ -138,20 +155,20 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         return UICollectionReusableView()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 20.0, left: 0, bottom: 0, right: 0)
-    }
-    
 }
 
 extension LibraryViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 50)
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: (view.frame.width - 38) / 2 , height: 150)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 50)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 20.0, left: 0, bottom: 0, right: 0)
     }
     
 }

@@ -25,7 +25,7 @@
             </objects>
             <point key="canvasLocation" x="-632" y="814"/>
         </scene>
-        <!--Library-->
+        <!--Library View Controller-->
         <scene sceneID="dKO-hh-cX9">
             <objects>
                 <viewController id="DIP-zq-dTI" customClass="LibraryViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController">
@@ -35,11 +35,19 @@
                         <viewLayoutGuide key="safeArea" id="6N8-Lh-6c1"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Library" image="bookmark.fill" catalog="system" id="6Ya-2E-ur3"/>
+                    <navigationItem key="navigationItem" id="oQu-xn-RQT"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E5L-LF-NfT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="745" y="814"/>
+            <point key="canvasLocation" x="1435" y="814"/>
+        </scene>
+        <!--Single Color View Controller-->
+        <scene sceneID="HVL-00-kgL">
+            <objects>
+                <viewController storyboardIdentifier="SingleColorVC" id="sWG-fk-k1N" customClass="SingleColorViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oRb-ye-fRx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2155" y="814"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="nwj-us-MQr">
@@ -53,12 +61,31 @@
                     </tabBar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="zg0-YX-Mxv"/>
-                        <segue destination="DIP-zq-dTI" kind="relationship" relationship="viewControllers" id="LZO-KR-784"/>
+                        <segue destination="ehS-Pj-XKC" kind="relationship" relationship="viewControllers" id="LZO-KR-784"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PBi-QC-P5h" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="89.855072463768124" y="88.392857142857139"/>
+        </scene>
+        <!--Library-->
+        <scene sceneID="rSa-AP-jY5">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ehS-Pj-XKC" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Library" image="bookmark.fill" catalog="system" id="6Ya-2E-ur3"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dCG-N8-2QW">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="DIP-zq-dTI" kind="relationship" relationship="rootViewController" id="YcL-fz-YcJ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2XU-kG-8rz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="707" y="814"/>
         </scene>
     </scenes>
     <color key="tintColor" systemColor="systemBlueColor"/>
