@@ -10,6 +10,7 @@
 		806FFCE526E50A2300BA158A /* UIView+color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806FFCE426E50A2300BA158A /* UIView+color.swift */; };
 		806FFCE726E626D300BA158A /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806FFCE626E626D300BA158A /* UIColor+.swift */; };
 		80700A4B26F5E901002CB6C9 /* SingleColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80700A4A26F5E901002CB6C9 /* SingleColorViewController.swift */; };
+		80700A4F26F7DB10002CB6C9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80700A4E26F7DB10002CB6C9 /* AudioToolbox.framework */; };
 		809314BB26E9D7CC000C1A16 /* LibraryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809314BA26E9D7CC000C1A16 /* LibraryCell.swift */; };
 		809314BE26E9DB89000C1A16 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809314BD26E9DB89000C1A16 /* Color.swift */; };
 		809314C026EA3861000C1A16 /* TitleHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809314BF26EA3861000C1A16 /* TitleHeaderView.swift */; };
@@ -35,6 +36,7 @@
 		806FFCE426E50A2300BA158A /* UIView+color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+color.swift"; sourceTree = "<group>"; };
 		806FFCE626E626D300BA158A /* UIColor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
 		80700A4A26F5E901002CB6C9 /* SingleColorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleColorViewController.swift; sourceTree = "<group>"; };
+		80700A4E26F7DB10002CB6C9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		809314BA26E9D7CC000C1A16 /* LibraryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryCell.swift; sourceTree = "<group>"; };
 		809314BD26E9DB89000C1A16 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		809314BF26EA3861000C1A16 /* TitleHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleHeaderView.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B7AE82F956D697E8E663257 /* Pods_PixelPalette.framework in Frameworks */,
+				80700A4F26F7DB10002CB6C9 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +74,7 @@
 		353AEF2168462EA6B7A32234 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				80700A4E26F7DB10002CB6C9 /* AudioToolbox.framework */,
 				FE6A0AF52EB835BF040D0230 /* Pods_PixelPalette.framework */,
 			);
 			name = Frameworks;

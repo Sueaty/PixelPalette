@@ -6,6 +6,7 @@ target 'PixelPalette' do
   use_frameworks!
 
   # Util
-  pod 'SnapKit'                 , '5.0.1'
+  pod 'SnapKit'			, '5.0.1'
+  pod 'Toast-Swift'		, '5.0.1'
 
 end

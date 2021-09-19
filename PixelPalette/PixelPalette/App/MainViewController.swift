@@ -9,6 +9,8 @@ import UIKit
 import Photos
 import SnapKit
 import CoreData
+import Toast_Swift
+import AudioToolbox
 
 final class MainViewController: BaseViewController {
     
@@ -245,20 +247,20 @@ private extension MainViewController {
         let cancel = UIAlertAction(title: "취소", style: .cancel)
         let save = UIAlertAction(title: "저장", style: .default) { [weak self] action in
             guard let self = self,
-                  let colorName = alert.textFields?[0].text else {
-                // 이거 진짜 진동 되는것인가...?
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.warning)
-                return
-            }
+                  let colorName = alert.textFields?[0].text else { return }
             
-            // save color to core data
-            self.saveColor(name: colorName, hex: colorHexValue!)
+            if colorName.isEmpty {
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                self.view.makeToast("이름이 없어 저장할 수 없었어요ㅠ.ㅠ")
+            } else {
+                // save color to core data
+                self.saveColor(name: colorName, hex: colorHexValue!)
+            }
         }
         
         alert.addAction(save)
         alert.addAction(cancel)
-        
+    
         alert.addTextField { textField in
             textField.placeholder = "당신의 색 이름을 정해주세요"
         }

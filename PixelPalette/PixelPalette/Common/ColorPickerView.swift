@@ -40,6 +40,14 @@ final class ColorPickerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        super.point(inside: point, with: event)
+        
+        // add extra 50 touch area (negative value increases the touchable area)
+        let touchArea = bounds.insetBy(dx: -50, dy: -50)
+        return touchArea.contains(point)
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastLocation = self.center
     }
