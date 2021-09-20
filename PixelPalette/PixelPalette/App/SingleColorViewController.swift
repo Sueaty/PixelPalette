@@ -11,7 +11,7 @@ import CoreData
 
 protocol SingleColorDelegate {
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String)
-    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String)
+    func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String)
 }
 
 final class SingleColorViewController: BaseViewController {
@@ -200,20 +200,31 @@ private extension SingleColorViewController {
     
     @objc func didPressDeleteButton(_ sender: UIButton) {
         // delete from core data
-        let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
-        fetchColor.predicate = NSPredicate(format: "name = %@", colorModel!.name as String)
-        let result = try? context.fetch(fetchColor)
-        let color: Color! = result?.first
-        context.delete(color)
-        
-        do {
-            try context.save()
-        } catch {
-            print("Failed to delete: \(error)")
+        let alert = UIAlertController(title: "색상 삭제",
+                                      message: "\(colorModel!.name) 색을 지우시겠습니까?",
+                                      preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let delete = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
+            fetchColor.predicate = NSPredicate(format: "name = %@", self.colorModel!.name as String)
+            let result = try? self.context.fetch(fetchColor)
+            let color: Color! = result?.first
+            self.context.delete(color)
+            
+            do {
+                try self.context.save()
+            } catch {
+                print("Failed to delete: \(error)")
+            }
+            
+            self.delegate?.didDeleteColor(self, deletedColor: self.colorModel!.name)
+            self.dismiss(animated: true, completion: nil)
         }
         
-        delegate?.didDeleteeColor(self, deletedColor: colorModel!.name)
-        dismiss(animated: true, completion: nil)
+        alert.addAction(cancel)
+        alert.addAction(delete)
+        present(alert, animated: true, completion: nil)
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -233,7 +244,6 @@ private extension SingleColorViewController {
     }
     
     func updateColorName(change name: String) {
-        // update from  Core Data
         let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
         fetchColor.predicate = NSPredicate(format: "name = %@", colorModel!.name as String)
         

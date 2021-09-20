@@ -1,5 +1,5 @@
 //
-//  LibraryViewController.swift
+//  PaletteViewController.swift
 //  PixelPalette
 //
 //  Created by Sue Cho on 2021/08/08.
@@ -7,11 +7,12 @@
 
 import UIKit
 import CoreData
+import Toast_Swift
 
-final class LibraryViewController: BaseViewController {
+final class PaletteViewController: BaseViewController {
     
     // MARK:- Views    
-    private lazy var defaultView: DefaultView = {
+    private lazy var defaultView: DefaultView? = {
         let view = DefaultView(frame: .zero,
                                type: .Library)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -30,8 +31,8 @@ final class LibraryViewController: BaseViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.register(LibraryCell.self,
-                                forCellWithReuseIdentifier: LibraryCell.identifier)
+        collectionView.register(PaletteCell.self,
+                                forCellWithReuseIdentifier: PaletteCell.identifier)
         collectionView.register(TitleHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: TitleHeaderView.identifier)
@@ -55,8 +56,9 @@ final class LibraryViewController: BaseViewController {
         fetchPalette()
         collectionView.reloadData()
         if !colors.isEmpty {
-            defaultView.removeFromSuperview()
+            defaultView?.removeFromSuperview()
         }
+        
         navigationController?.navigationBar.isHidden = true
     }
     
@@ -64,14 +66,14 @@ final class LibraryViewController: BaseViewController {
     override func setViewHierarchy() {
         super.setViewHierarchy()
         
-        view.addSubview(defaultView)
+        view.addSubview(defaultView!)
         view.addSubview(collectionView)
     }
     
     override func setViewConstraint() {
         super.setViewConstraint()
         
-        defaultView.snp.makeConstraints { make in
+        defaultView!.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
@@ -87,7 +89,7 @@ final class LibraryViewController: BaseViewController {
 
 }
 
-private extension LibraryViewController {
+private extension PaletteViewController {
     
     func fetchPalette() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -98,9 +100,7 @@ private extension LibraryViewController {
         
         do {
             let results = try managedContext.fetch(fetchRequest)
-            if results.count > 0 {
-                colors = results
-            }
+            colors = results
         } catch let error as NSError {
             print("Failed to fetch. \(error) \(error.userInfo)")
         }
@@ -108,21 +108,31 @@ private extension LibraryViewController {
     
 }
 
-extension LibraryViewController: SingleColorDelegate {
+extension PaletteViewController: SingleColorDelegate {
     
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
         fetchPalette()
         collectionView.reloadData()
+        view.makeToast("Successfully Edited Color Name")
     }
     
-    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String) {
+    func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String) {
         fetchPalette()
         collectionView.reloadData()
+        if colors.isEmpty {
+            view.addSubview(defaultView!)
+            defaultView!.snp.makeConstraints { make in
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+                make.leading.trailing.equalToSuperview()
+            }
+        }
+        view.makeToast("Successfully Deleted Color")
     }
 
 }
 
-extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PaletteViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return colors.count
@@ -135,8 +145,8 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         let color = PaletteColor(name: name ?? "",
                                  hex: hexValue ?? "#FFFFFF")
         
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LibraryCell.identifier,
-                                                         for: indexPath) as? LibraryCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PaletteCell.identifier,
+                                                         for: indexPath) as? PaletteCell {
             cell.compose(data: color)
             return cell
         }
@@ -174,7 +184,7 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
     
 }
 
-extension LibraryViewController: UICollectionViewDelegateFlowLayout {
+extension PaletteViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 50)
