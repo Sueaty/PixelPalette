@@ -7,11 +7,12 @@
 
 import UIKit
 import CoreData
+import Toast_Swift
 
 final class PaletteViewController: BaseViewController {
     
     // MARK:- Views    
-    private lazy var defaultView: DefaultView = {
+    private lazy var defaultView: DefaultView? = {
         let view = DefaultView(frame: .zero,
                                type: .Library)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -53,10 +54,10 @@ final class PaletteViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         fetchPalette()
-        collectionView.reloadData()
         if !colors.isEmpty {
-            defaultView.removeFromSuperview()
+            defaultView?.removeFromSuperview()
         }
+        
         navigationController?.navigationBar.isHidden = true
     }
     
@@ -64,14 +65,14 @@ final class PaletteViewController: BaseViewController {
     override func setViewHierarchy() {
         super.setViewHierarchy()
         
-        view.addSubview(defaultView)
+        view.addSubview(defaultView!)
         view.addSubview(collectionView)
     }
     
     override func setViewConstraint() {
         super.setViewConstraint()
         
-        defaultView.snp.makeConstraints { make in
+        defaultView!.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
@@ -113,11 +114,22 @@ extension PaletteViewController: SingleColorDelegate {
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
         fetchPalette()
         collectionView.reloadData()
+        view.makeToast("Successfully Edited Color Name")
     }
     
     func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String) {
-        fetchPalette()
-        collectionView.reloadData()
+        if !colors.isEmpty {
+            fetchPalette()
+            collectionView.reloadData()
+        } else {
+            view.addSubview(defaultView!)
+            defaultView!.snp.makeConstraints { make in
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+                make.leading.trailing.equalToSuperview()
+            }
+        }
+        view.makeToast("Successfully Deleted Color")
     }
 
 }
