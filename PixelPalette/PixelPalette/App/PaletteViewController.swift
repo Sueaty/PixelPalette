@@ -117,7 +117,7 @@ extension PaletteViewController: SingleColorDelegate {
         view.makeToast("Successfully Edited Color Name")
     }
     
-    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String) {
+    func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String) {
         if !colors.isEmpty {
             fetchPalette()
             collectionView.reloadData()

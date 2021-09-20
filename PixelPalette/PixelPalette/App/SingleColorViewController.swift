@@ -11,7 +11,7 @@ import CoreData
 
 protocol SingleColorDelegate {
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String)
-    func didDeleteeColor(_ viewController: SingleColorViewController, deletedColor name: String)
+    func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String)
 }
 
 final class SingleColorViewController: BaseViewController {
@@ -218,7 +218,7 @@ private extension SingleColorViewController {
                 print("Failed to delete: \(error)")
             }
             
-            self.delegate?.didDeleteeColor(self, deletedColor: self.colorModel!.name)
+            self.delegate?.didDeleteColor(self, deletedColor: self.colorModel!.name)
             self.dismiss(animated: true, completion: nil)
         }
         
