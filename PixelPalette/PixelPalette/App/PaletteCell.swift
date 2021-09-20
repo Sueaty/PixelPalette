@@ -1,5 +1,5 @@
 //
-//  LibraryCell.swift
+//  PaletteCell.swift
 //  PixelPalette
 //
 //  Created by Sue Cho on 2021/09/09.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LibraryCell: UICollectionViewCell {
+final class PaletteCell: UICollectionViewCell {
     // MARK:- Views
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -35,7 +35,7 @@ final class LibraryCell: UICollectionViewCell {
     
     
     // MARK:- Properties
-    static let identifier = String(describing: LibraryCell.self)
+    static let identifier = String(describing: PaletteCell.self)
     var color: PaletteColor?
     
     // MARK:- Initializer
@@ -70,7 +70,7 @@ final class LibraryCell: UICollectionViewCell {
     }
 }
 
-private extension LibraryCell {
+private extension PaletteCell {
     
     func setViewHierarchy() {
         contentView.addSubview(labelStackView)

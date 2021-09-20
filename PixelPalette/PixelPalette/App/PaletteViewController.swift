@@ -1,5 +1,5 @@
 //
-//  LibraryViewController.swift
+//  PaletteViewController.swift
 //  PixelPalette
 //
 //  Created by Sue Cho on 2021/08/08.
@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-final class LibraryViewController: BaseViewController {
+final class PaletteViewController: BaseViewController {
     
     // MARK:- Views    
     private lazy var defaultView: DefaultView = {
@@ -30,8 +30,8 @@ final class LibraryViewController: BaseViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.register(LibraryCell.self,
-                                forCellWithReuseIdentifier: LibraryCell.identifier)
+        collectionView.register(PaletteCell.self,
+                                forCellWithReuseIdentifier: PaletteCell.identifier)
         collectionView.register(TitleHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: TitleHeaderView.identifier)
@@ -87,7 +87,7 @@ final class LibraryViewController: BaseViewController {
 
 }
 
-private extension LibraryViewController {
+private extension PaletteViewController {
     
     func fetchPalette() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -108,7 +108,7 @@ private extension LibraryViewController {
     
 }
 
-extension LibraryViewController: SingleColorDelegate {
+extension PaletteViewController: SingleColorDelegate {
     
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
         fetchPalette()
@@ -122,7 +122,7 @@ extension LibraryViewController: SingleColorDelegate {
 
 }
 
-extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PaletteViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return colors.count
@@ -135,8 +135,8 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
         let color = PaletteColor(name: name ?? "",
                                  hex: hexValue ?? "#FFFFFF")
         
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LibraryCell.identifier,
-                                                         for: indexPath) as? LibraryCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PaletteCell.identifier,
+                                                         for: indexPath) as? PaletteCell {
             cell.compose(data: color)
             return cell
         }
@@ -174,7 +174,7 @@ extension LibraryViewController: UICollectionViewDataSource, UICollectionViewDel
     
 }
 
-extension LibraryViewController: UICollectionViewDelegateFlowLayout {
+extension PaletteViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 50)

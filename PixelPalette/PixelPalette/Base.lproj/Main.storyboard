@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Home-->
+        <!--Picker-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,17 +18,17 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Home" image="paintpalette.fill" catalog="system" id="9Jb-44-w6t"/>
+                    <tabBarItem key="tabBarItem" title="Picker" image="photo.fill" catalog="system" id="9Jb-44-w6t"/>
                     <navigationItem key="navigationItem" id="I6A-Pe-toz"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-632" y="814"/>
         </scene>
-        <!--Library View Controller-->
+        <!--Palette View Controller-->
         <scene sceneID="dKO-hh-cX9">
             <objects>
-                <viewController id="DIP-zq-dTI" customClass="LibraryViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="DIP-zq-dTI" customClass="PaletteViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VJZ-Pb-rTH">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -68,11 +68,11 @@
             </objects>
             <point key="canvasLocation" x="89.855072463768124" y="88.392857142857139"/>
         </scene>
-        <!--Library-->
+        <!--Palette-->
         <scene sceneID="rSa-AP-jY5">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ehS-Pj-XKC" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Library" image="bookmark.fill" catalog="system" id="6Ya-2E-ur3"/>
+                    <tabBarItem key="tabBarItem" title="Palette" image="paintpalette.fill" catalog="system" id="6Ya-2E-ur3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="dCG-N8-2QW">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -90,8 +90,8 @@
     </scenes>
     <color key="tintColor" systemColor="systemBlueColor"/>
     <resources>
-        <image name="bookmark.fill" catalog="system" width="112" height="128"/>
         <image name="paintpalette.fill" catalog="system" width="128" height="105"/>
+        <image name="photo.fill" catalog="system" width="128" height="93"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
