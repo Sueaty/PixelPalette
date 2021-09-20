@@ -83,7 +83,7 @@ final class MainViewController: BaseViewController {
     }()
     
     // MARK:- Properties
-    private var imageViewWidthConstraint: Constraint?
+    private var widthConstraint: Constraint?
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
@@ -213,14 +213,17 @@ private extension MainViewController {
     }
     
     func resetImageViewConstraint() {
+        widthConstraint?.deactivate()
+        
         let viewHeight = imageScrollView.frame.height
         let imageHeight = image!.size.height
         let imageWidth = image!.size.width
         let increaseRatio = viewHeight / imageHeight
         imageView.snp.makeConstraints { make in
-            make.width.equalTo(imageWidth * increaseRatio)
-                .priority(999)
+            widthConstraint = make.width.equalTo(imageWidth * increaseRatio).priority(999).constraint
         }
+        
+        widthConstraint?.activate()
     }
     
     func showAccessAuthAlert(title: String) {
@@ -255,6 +258,7 @@ private extension MainViewController {
             } else {
                 // save color to core data
                 self.saveColor(name: colorName, hex: colorHexValue!)
+                self.view.makeToast("Successfullly Saved Color")
             }
         }
         

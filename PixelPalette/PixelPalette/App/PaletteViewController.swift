@@ -54,6 +54,7 @@ final class PaletteViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         fetchPalette()
+        collectionView.reloadData()
         if !colors.isEmpty {
             defaultView?.removeFromSuperview()
         }
@@ -99,9 +100,7 @@ private extension PaletteViewController {
         
         do {
             let results = try managedContext.fetch(fetchRequest)
-            if results.count > 0 {
-                colors = results
-            }
+            colors = results
         } catch let error as NSError {
             print("Failed to fetch. \(error) \(error.userInfo)")
         }
@@ -118,10 +117,9 @@ extension PaletteViewController: SingleColorDelegate {
     }
     
     func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String) {
-        if !colors.isEmpty {
-            fetchPalette()
-            collectionView.reloadData()
-        } else {
+        fetchPalette()
+        collectionView.reloadData()
+        if colors.isEmpty {
             view.addSubview(defaultView!)
             defaultView!.snp.makeConstraints { make in
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
