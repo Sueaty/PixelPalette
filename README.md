@@ -8,7 +8,8 @@
 
 <img width=1000 height= 400 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/sample.jpg?raw=true">
 
-## About Pixel Palette <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon.png?raw=true" width = 50 align = right>
+## About Pixel Palette <img src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
+
 ### Save Your Color
 
 Save color by moving the Picker around.<br/> 
