@@ -181,16 +181,20 @@ final class SingleColorViewController: BaseViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
+    
 }
 
 private extension SingleColorViewController {
     
+    // Save edited color name when 'Save' button is pressed
     @objc func didPressSaveButton(_ sender: UIButton) {
         guard let colorModel = colorModel,
               let textFieldString = nameLabelTextField.text else { return }
-        let nameDidChange = colorModel.name != textFieldString
         
+        /// Case #1 : name changed
+        let nameDidChange = colorModel.name != textFieldString
         if nameDidChange {
+            /// update color name and call delegate function
             updateColorName(change: textFieldString)
             delegate?.didEditColorName(self, didEditName: textFieldString)
         }
@@ -198,10 +202,10 @@ private extension SingleColorViewController {
         dismiss(animated: true, completion: nil)
     }
     
+    // Delete color from CoreData when 'Delete' button is pressed
     @objc func didPressDeleteButton(_ sender: UIButton) {
-        // delete from core data
-        let alert = UIAlertController(title: "색상 삭제",
-                                      message: "\(colorModel!.name) 색을 지우시겠습니까?",
+        let alert = UIAlertController(title: "Delete Color",
+                                      message: "Would you like to delete \(colorModel!.name)?",
                                       preferredStyle: .alert)
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let delete = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
@@ -214,7 +218,7 @@ private extension SingleColorViewController {
             
             do {
                 try self.context.save()
-            } catch {
+            } catch let error as NSError{
                 print("Failed to delete: \(error)")
             }
             
@@ -249,11 +253,11 @@ private extension SingleColorViewController {
         
         let result = try? context.fetch(fetchColor)
         let color: Color! = result?.first
-        
         color.name = name
+        
         do {
             try context.save()
-        } catch {
+        } catch let error as NSError {
             print("Failed to save: \(error)")
         }
     }
