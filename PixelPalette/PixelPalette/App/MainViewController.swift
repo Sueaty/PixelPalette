@@ -28,7 +28,7 @@ final class MainViewController: BaseViewController {
         button.setTitle("S A V E", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
-        button.addTarget(self, action: #selector(savePickedColor(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapSaveButton(_:)), for: .touchUpInside)
         button.titleLabel?.textColor = .black
         button.layer.cornerRadius = 5
         button.layer.borderWidth = 1
@@ -87,9 +87,8 @@ final class MainViewController: BaseViewController {
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
-            scrollToBeginning()
-            resetImageViewConstraint()
-            resetPicker()
+            resetImageCondition()
+            resetPickerCondition()
         }
     }
     private var pickedColor: UIColor? {
@@ -175,46 +174,47 @@ final class MainViewController: BaseViewController {
 
 private extension MainViewController {
 
+    // When 'photos' button is tapped,
     @objc func didTapPhotosButton(_ sender: UIButton) {
+        /// check for authorization status
         let authState = PHPhotoLibrary.authorizationStatus()
+        
+        /// Case #1 : Authorized
         if authState == .authorized {
-            self.navigateToPhotoLibrary()
-        } else if authState == .notDetermined {
+            /// open photos library
+            presentPhotoLibrary()
+        }
+        /// Case #2 : Not Determined
+        else if authState == .notDetermined {
+            /// request for authorization
             PHPhotoLibrary.requestAuthorization { [unowned self] state in
+                /// if user authorizes, then open photos library
                 if state == .authorized {
-                    self.navigateToPhotoLibrary()
+                    self.presentPhotoLibrary()
                 }
             }
-        } else {
-            showAccessAuthAlert(title: "사진첩")
+        }
+        /// Case #3 : No Authorization
+        else {
+            /// ask user to authorize app in the Settings
+            showAccessAuthAlert()
         }
     }
     
-    @objc func savePickedColor(_ sender: UIButton) {
+    // When 'save' button is tapped
+    @objc func didTapSaveButton(_ sender: UIButton) {
+        /// If picker view has picked a color, ask user if he/she wants to save the color
         if pickedColor != nil { showSaveAlert() }
     }
     
-    func scrollToBeginning() {
+    // Reset Image when new image is loaded
+    func resetImageCondition() {
+        /// Scroll image to the left (beginning)
         let leftContentOffset = CGPoint(x: -imageScrollView.contentInset.left, y: 0)
         imageScrollView.setContentOffset(leftContentOffset, animated: true)
-    }
-    
-    func resetPicker() {
-        // set picker position
-        let centerPoint = CGPoint(x: imageScrollView.center.x,
-                                  y: imageScrollView.frame.size.height / 2)
-        pickerView.lastLocation = centerPoint
-        pickerView.center = centerPoint
-        pickerView.isHidden = false
-        pickerView.imageView = imageView
         
-        // set picker's initial position color
-        pickedColor = imageView.colorOfPoint(point: centerPoint)
-    }
-    
-    func resetImageViewConstraint() {
+        /// Reset image's width constraint
         widthConstraint?.deactivate()
-        
         let viewHeight = imageScrollView.frame.height
         let imageHeight = image!.size.height
         let imageWidth = image!.size.width
@@ -222,16 +222,34 @@ private extension MainViewController {
         imageView.snp.makeConstraints { make in
             widthConstraint = make.width.equalTo(imageWidth * increaseRatio).priority(999).constraint
         }
-        
         widthConstraint?.activate()
     }
     
-    func showAccessAuthAlert(title: String) {
-        let alert = UIAlertController(title: "\(title)에 대한 접근 권한이 없어요.",
-                                      message: "설정 앱에서 권한을 수정해주세요 :)",
+    // Reset Picker when new image is loaded
+    func resetPickerCondition() {
+        /// set pickerview's property
+        pickerView.imageView = imageView
+        
+        /// set picker's position to center
+        let centerPoint = CGPoint(x: imageScrollView.center.x,
+                                  y: imageScrollView.frame.size.height / 2)
+        pickerView.lastLocation = centerPoint
+        pickerView.center = centerPoint
+        
+        /// reveal picker view
+        pickerView.isHidden = false
+        
+        /// set picker's initial color
+        pickedColor = imageView.colorOfPoint(point: centerPoint)
+    }
+    
+    // Alert to navigate user to Setting for Photos Library authorization
+    func showAccessAuthAlert() {
+        let alert = UIAlertController(title: "Access to Photos Denied",
+                                      message: "Please go to Settings to allow access to your Photos.",
                                       preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        let confirm = UIAlertAction(title: "지금 설정하기", style: .default, handler: { _ in
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let confirm = UIAlertAction(title: "Settings", style: .default, handler: { _ in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
                                       options: [:],
                                       completionHandler: nil)
@@ -242,23 +260,22 @@ private extension MainViewController {
         present(alert, animated: false, completion: nil)
     }
     
+    // Alert to save color
     func showSaveAlert() {
-        let colorHexValue = pickedColor?.toHexString().uppercased()
-        let alert = UIAlertController(title: colorHexValue ?? "색 지정",
-                                      message: nil,
-                                      preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "취소", style: .cancel)
-        let save = UIAlertAction(title: "저장", style: .default) { [weak self] action in
+        guard let colorHexValue = pickedColor?.toHexString().uppercased() else { return }
+        let alert = UIAlertController(title: colorHexValue, message: nil, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let save = UIAlertAction(title: "Save", style: .default) { [weak self] action in
             guard let self = self,
                   let colorName = alert.textFields?[0].text else { return }
             
             if colorName.isEmpty {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                self.view.makeToast("이름이 없어 저장할 수 없었어요ㅠ.ㅠ")
+                self.view.makeToast("Give a Name to Save the Color!")
             } else {
                 // save color to core data
-                self.saveColor(name: colorName, hex: colorHexValue!)
-                self.view.makeToast("Successfullly Saved Color")
+                self.saveColor(name: colorName, hex: colorHexValue)
+                self.view.makeToast("Color Saved!")
             }
         }
         
@@ -266,7 +283,7 @@ private extension MainViewController {
         alert.addAction(cancel)
     
         alert.addTextField { textField in
-            textField.placeholder = "당신의 색 이름을 정해주세요"
+            textField.placeholder = "Give a name to your color"
         }
         present(alert, animated: false, completion: nil)
     }
@@ -294,15 +311,6 @@ private extension MainViewController {
 
 extension MainViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    func navigateToPhotoLibrary() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.mediaController.sourceType = .photoLibrary
-            self.mediaController.allowsEditing = false
-            self.present(self.mediaController, animated: true)
-        }
-    }
-    
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         defaultView?.removeFromSuperview()
@@ -314,10 +322,19 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
         picker.dismiss(animated: true, completion: nil)
     }
     
+    func presentPhotoLibrary() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.mediaController.sourceType = .photoLibrary
+            self.mediaController.allowsEditing = false
+            self.present(self.mediaController, animated: true)
+        }
+    }
+    
 }
 
 extension MainViewController: UIScrollViewDelegate {
-    
+    // TO DO (discardable) : pinch to zoom
 }
 
 extension MainViewController: ColorPickerDelegate {

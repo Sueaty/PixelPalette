@@ -113,7 +113,7 @@ extension PaletteViewController: SingleColorDelegate {
     func didEditColorName(_ viewController: SingleColorViewController, didEditName to: String) {
         fetchPalette()
         collectionView.reloadData()
-        view.makeToast("Successfully Edited Color Name")
+        view.makeToast("Color Name Edited!")
     }
     
     func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String) {
@@ -127,7 +127,7 @@ extension PaletteViewController: SingleColorDelegate {
                 make.leading.trailing.equalToSuperview()
             }
         }
-        view.makeToast("Successfully Deleted Color")
+        view.makeToast("Color Deleted!")
     }
 
 }

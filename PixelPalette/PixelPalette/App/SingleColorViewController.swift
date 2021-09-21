@@ -200,8 +200,8 @@ private extension SingleColorViewController {
     
     @objc func didPressDeleteButton(_ sender: UIButton) {
         // delete from core data
-        let alert = UIAlertController(title: "색상 삭제",
-                                      message: "\(colorModel!.name) 색을 지우시겠습니까?",
+        let alert = UIAlertController(title: "Delete Color",
+                                      message: "Would you like to delete \(colorModel!.name)?",
                                       preferredStyle: .alert)
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let delete = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
