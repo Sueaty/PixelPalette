@@ -42,4 +42,4 @@ Whenever you a find a nagging bug or if you came up with a great idea for this a
 All your comments and emails are welcomed.<br/><br/>
 
 e-mail 💌: sueaty.cho@gmail.com <br/>
-instagram 🎞 : @pixle.palette__
+instagram 🎞 : @pixel.palette__
