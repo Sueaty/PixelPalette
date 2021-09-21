@@ -36,7 +36,7 @@ final class PaletteCell: UICollectionViewCell {
     
     // MARK:- Properties
     static let identifier = String(describing: PaletteCell.self)
-    var color: PaletteColor?
+    var colorModel: PaletteColor?
     
     // MARK:- Initializer
     override init(frame: CGRect) {
@@ -53,20 +53,17 @@ final class PaletteCell: UICollectionViewCell {
     }
     
     // MARK:- Update Cycle
-    override func setNeedsLayout() {
-        setUI()
-    }
-    
     func compose(data: Any?) {
-        guard let color = data as? PaletteColor else { return }
+        guard let colorModel = data as? PaletteColor else { return }
+        self.colorModel = colorModel
         
-        let uicolor = UIColor.init(hexString: color.hex)
-        self.color = color
-        self.color?.color = uicolor
-        contentView.backgroundColor = uicolor
+        let uicolor = UIColor.init(hexString: colorModel.hex)
+        self.colorModel?.color = uicolor
         
-        nameLabel.text = color.name
-        hexLabel.text = color.hex
+        nameLabel.text = colorModel.name
+        hexLabel.text = colorModel.hex
+        
+        setUI()
     }
 }
 
@@ -87,7 +84,9 @@ private extension PaletteCell {
     }
     
     func setUI() {
-        guard let color = color?.color else { return }
+        guard let color = colorModel?.color else { return }
+        contentView.backgroundColor = color
+        
         let whiteHighlight = [NSAttributedString.Key.backgroundColor: UIColor.white]
         let blackHighlight = [NSAttributedString.Key.backgroundColor: UIColor.black]
         if color.isLight {
