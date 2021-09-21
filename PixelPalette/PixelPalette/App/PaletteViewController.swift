@@ -41,6 +41,10 @@ final class PaletteViewController: BaseViewController {
     
     // MARK:- Properties
     var colors = [NSManagedObject]()
+    var context: NSManagedObjectContext {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
+    }
 
     // MARK:- View Life Cycle
     override func viewDidLoad() {
@@ -92,17 +96,9 @@ final class PaletteViewController: BaseViewController {
 private extension PaletteViewController {
     
     func fetchPalette() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Color")
-        
-        do {
-            let results = try managedContext.fetch(fetchRequest)
+        let fetchEntity = NSFetchRequest<NSManagedObject>(entityName: "Color")
+        if let results = try? context.fetch(fetchEntity) {
             colors = results
-        } catch let error as NSError {
-            print("Failed to fetch. \(error) \(error.userInfo)")
         }
     }
     
@@ -119,6 +115,8 @@ extension PaletteViewController: SingleColorDelegate {
     func didDeleteColor(_ viewController: SingleColorViewController, deletedColor name: String) {
         fetchPalette()
         collectionView.reloadData()
+        
+        /// if there are 0 colors saved, then show default view
         if colors.isEmpty {
             view.addSubview(defaultView!)
             defaultView!.snp.makeConstraints { make in

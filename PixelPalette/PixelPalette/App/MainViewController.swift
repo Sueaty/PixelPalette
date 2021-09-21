@@ -288,6 +288,7 @@ private extension MainViewController {
         present(alert, animated: false, completion: nil)
     }
     
+    // Save color in CoreData
     func saveColor(name: String, hex: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return
