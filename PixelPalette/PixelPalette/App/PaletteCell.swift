@@ -65,6 +65,12 @@ final class PaletteCell: UICollectionViewCell {
         
         setUI()
     }
+    
+    // MARK:- Override
+    override func prepareForReuse() {
+        nameLabel.attributedText = nil
+        hexLabel.attributedText = nil
+    }
 }
 
 private extension PaletteCell {
