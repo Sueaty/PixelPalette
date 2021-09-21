@@ -32,7 +32,7 @@ Delete the from your palette freely.<br/>
 
 ## Version Update
 <b>ver 1.0.0</b>
-* App Store Release (expecting)
+* App Store Release (pending)
 
 
 ## Reach Out!
