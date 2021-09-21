@@ -174,8 +174,8 @@ extension PaletteViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: TitleHeaderView.identifier,
-                                                                             for: indexPath)
+                                                                                withReuseIdentifier: TitleHeaderView.identifier,
+                                                                                for: indexPath)
             return headerView
         }
         

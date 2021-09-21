@@ -12,16 +12,16 @@ final class PaletteCell: UICollectionViewCell {
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .black
         return label
     }()
     
     private lazy var hexLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = .white
         return label
     }()
     
@@ -36,7 +36,7 @@ final class PaletteCell: UICollectionViewCell {
     
     // MARK:- Properties
     static let identifier = String(describing: PaletteCell.self)
-    var colorModel: PaletteColor?
+    var color: PaletteColor?
     
     // MARK:- Initializer
     override init(frame: CGRect) {
@@ -58,21 +58,15 @@ final class PaletteCell: UICollectionViewCell {
     }
     
     func compose(data: Any?) {
-        guard let colorModel = data as? PaletteColor else { return }
-        self.colorModel = colorModel
+        guard let color = data as? PaletteColor else { return }
         
-        let uicolor = UIColor.init(hexString: colorModel.hex)
-        self.colorModel?.color = uicolor
+        let uicolor = UIColor.init(hexString: color.hex)
+        self.color = color
+        self.color?.color = uicolor
+        contentView.backgroundColor = uicolor
         
-        nameLabel.text = colorModel.name
-        hexLabel.text = colorModel.hex
-        
-        setUI()
-    }
-    
-    override func prepareForReuse() {
-        hexLabel.attributedText = nil
-        nameLabel.attributedText = nil
+        nameLabel.text = color.name
+        hexLabel.text = color.hex
     }
 }
 
@@ -93,9 +87,7 @@ private extension PaletteCell {
     }
     
     func setUI() {
-        guard let color = colorModel?.color else { return }
-        contentView.backgroundColor = color
-        
+        guard let color = color?.color else { return }
         let whiteHighlight = [NSAttributedString.Key.backgroundColor: UIColor.white]
         let blackHighlight = [NSAttributedString.Key.backgroundColor: UIColor.black]
         if color.isLight {
