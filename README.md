@@ -1,5 +1,5 @@
 
-# Pixel Palette 🎨
+# Pixel Palette 🎨 <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
 > What was the color of the sunset yesterday? <br/>
 > Or the color you would like to use in your vlog? <br/>
@@ -8,7 +8,7 @@
 
 <img width=1000 height= 400 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/sample.jpg?raw=true">
 
-## About Pixel Palette
+## About Pixel Palette <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon.png?raw=true" width = 50 align = right>
 ### Save Your Color
 
 Save color by moving the Picker around.<br/> 
@@ -30,12 +30,12 @@ Delete the from your palette freely.<br/>
 | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/choosing_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/save_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/edit_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/delete_color.gif?raw=true"> |
 
 
-## Version Update
+## Version Update <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 <b>ver 1.0.0</b>
 * App Store Release (pending)
 
 
-## Reach Out!
+## Reach Out! <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
 Pixel Palette is full of potentials and with your help I'm pretty sure it will burst!!🔥🔥.<br/>
 Whenever you a find a nagging bug or if you came up with a great idea for this app do reach out to me!<br/>
