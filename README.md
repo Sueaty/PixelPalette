@@ -33,7 +33,7 @@ Delete the from your palette freely.<br/>
 
 ## Version Update <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 <b>ver 1.0.0</b>
-* App Store Release (pending)
+* App Store Release
 
 
 ## Reach Out! <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
