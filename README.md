@@ -1,6 +1,16 @@
 
 # Pixel Palette 🎨 <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
+<p align="center">
+  <a href="https://apps.apple.com/us/app/pixel-palette/id1586994035" target="_blank">
+    <img src = "https://devimages-cdn.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg"> 
+  </a>
+  <a href="https://apps.apple.com/us/app/pixel-palette/id1586994035" target="_blank">
+    <img src = "https://devimages-cdn.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store-kr.svg"> 
+  </a>
+</p>
+
+
 > What was the color of the sunset yesterday? <br/>
 > Or the color you would like to use in your vlog? <br/>
 > <br/>
