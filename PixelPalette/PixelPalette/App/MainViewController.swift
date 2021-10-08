@@ -93,7 +93,7 @@ final class MainViewController: BaseViewController {
     }
     private var pickedColor: UIColor? {
         didSet {
-            pickerView.layer.borderColor = pickedColor!.isLight ? UIColor.black.cgColor : UIColor.white.cgColor
+            pickerView.color = pickedColor
         }
     }
     private var statusBarHeight: CGFloat {
