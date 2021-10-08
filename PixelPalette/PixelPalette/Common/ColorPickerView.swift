@@ -79,7 +79,7 @@ final class ColorPickerView: BaseView {
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         super.point(inside: point, with: event)
-        let touchArea = bounds.insetBy(dx: -50, dy: -50)
+        let touchArea = bounds.insetBy(dx: -30, dy: -30)
         return touchArea.contains(point)
     }
     
@@ -91,19 +91,8 @@ final class ColorPickerView: BaseView {
 private extension ColorPickerView {
 
     @objc func panColorPicker(_ sender: UIPanGestureRecognizer) {
-        adjustPickerViewSize(sender)
         setNewCenterPosition(sender)
         delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x, y: center.y))
-    }
-
-    func adjustPickerViewSize(_ sender: UIPanGestureRecognizer) {
-//        if sender.state == .began || sender.state == .changed {
-//            bounds.size = CGSize(width: 26, height: 26)
-//            layer.cornerRadius = 13
-//        } else if sender.state == .ended {
-//            bounds.size = CGSize(width: 20, height: 20)
-//            layer.cornerRadius = 10
-//        }
     }
 
     func setNewCenterPosition(_ sender: UIPanGestureRecognizer) {
