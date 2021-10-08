@@ -64,7 +64,7 @@ final class SingleColorViewController: BaseViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Save", for: .normal)
+        button.setTitle("Save".localize(), for: .normal)
         button.addTarget(self, action: #selector(didPressSaveButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -72,7 +72,7 @@ final class SingleColorViewController: BaseViewController {
     
     private lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Delete", for: .normal)
+        button.setTitle("Delete".localize(), for: .normal)
         button.setTitleColor(.red, for: .normal)
         button.backgroundColor = .lightGray.withAlphaComponent(0.9)
         button.layer.cornerRadius = 10
@@ -204,11 +204,11 @@ private extension SingleColorViewController {
     
     // Delete color from CoreData when 'Delete' button is pressed
     @objc func didPressDeleteButton(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Delete Color",
-                                      message: "Would you like to delete \(colorModel!.name)?",
+        let alert = UIAlertController(title: "Delete Color?".localize(),
+                                      message: "Would you like to delete %@?".localize(with: colorModel!.name),
                                       preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let delete = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+        let cancel = UIAlertAction(title: "Cancel".localize(), style: .cancel)
+        let delete = UIAlertAction(title: "Delete".localize(), style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
             fetchColor.predicate = NSPredicate(format: "name = %@", self.colorModel!.name as String)

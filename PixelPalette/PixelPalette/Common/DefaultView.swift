@@ -47,9 +47,9 @@ final class DefaultView: BaseView {
     override func setUI() {
         switch type {
         case .Picker:
-            infoLabel.text = "Choose Your Photo"
+            infoLabel.text = "Choose Your Photo".localize()
         case .Library:
-            infoLabel.text = "Create Your Own Color!"
+            infoLabel.text = "Create Your Own Color".localize()
         }
     }
     
