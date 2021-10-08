@@ -77,9 +77,6 @@ final class ColorPickerView: BaseView {
         }
     }
     
-    override func setUI() {
-    }
-    
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         super.point(inside: point, with: event)
         let touchArea = bounds.insetBy(dx: -50, dy: -50)

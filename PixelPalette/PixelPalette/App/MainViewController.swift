@@ -236,11 +236,11 @@ private extension MainViewController {
         pickerView.lastLocation = centerPoint
         pickerView.center = centerPoint
         
-        /// reveal picker view
-        pickerView.isHidden = false
-        
         /// set picker's initial color
         pickedColor = imageView.colorOfPoint(point: centerPoint)
+        
+        /// reveal picker view
+        pickerView.isHidden = false
     }
     
     // Alert to navigate user to Setting for Photos Library authorization
