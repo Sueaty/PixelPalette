@@ -28,6 +28,7 @@ final class SingleColorViewController: BaseViewController {
         let view = UIView(frame: CGRect(origin: CGPoint(x: 0, y: 0),
                                         size: CGSize(width: view.frame.width - 38, height: 150)))
         view.backgroundColor = .white
+        view.layer.cornerRadius = 3
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()

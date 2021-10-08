@@ -21,7 +21,7 @@ final class DefaultView: BaseView {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.alpha = 0.3
-        imageView.image = UIImage(systemName: "plus.app")
+        imageView.image = UIImage(systemName: "paintbrush.fill")
         imageView.image?.withTintColor(.orange)
         return imageView
     }()
