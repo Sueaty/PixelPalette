@@ -93,7 +93,7 @@ final class MainViewController: BaseViewController {
     }
     private var pickedColor: UIColor? {
         didSet {
-            pickerView.layer.borderColor = pickedColor!.isLight ? UIColor.black.cgColor : UIColor.white.cgColor
+            pickerView.color = pickedColor
         }
     }
     private var statusBarHeight: CGFloat {
@@ -108,7 +108,6 @@ final class MainViewController: BaseViewController {
         super.setInit()
         
         mediaController.delegate = self
-        imageScrollView.delegate = self
         pickerView.delegate = self
     }
     
@@ -173,7 +172,7 @@ final class MainViewController: BaseViewController {
 }
 
 private extension MainViewController {
-
+    
     // When 'photos' button is tapped,
     @objc func didTapPhotosButton(_ sender: UIButton) {
         /// check for authorization status
@@ -236,11 +235,11 @@ private extension MainViewController {
         pickerView.lastLocation = centerPoint
         pickerView.center = centerPoint
         
-        /// reveal picker view
-        pickerView.isHidden = false
-        
         /// set picker's initial color
         pickedColor = imageView.colorOfPoint(point: centerPoint)
+        
+        /// reveal picker view
+        pickerView.isHidden = false
     }
     
     // Alert to navigate user to Setting for Photos Library authorization
@@ -334,14 +333,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     
 }
 
-extension MainViewController: UIScrollViewDelegate {
-    // TO DO (discardable) : pinch to zoom
-}
-
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-        pickedColor = imageView.colorOfPoint(point: location)
+        pickedColor = imageScrollView.colorOfPoint(point: location)
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
