@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings (ENG)
+  PixelPalette
+
+  Created by Sue Cho on 2021/10/09.
+  
+*/
+
+CFBundleDisplayName = "Pixel Palette";
+NSPhotoLibraryUsageDescription = "Allow access to photos to pick colors from your library.";
