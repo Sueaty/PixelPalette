@@ -135,7 +135,7 @@ final class SingleColorViewController: BaseViewController {
         
         deleteButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)
-            make.leading.equalToSuperview().offset(-10)
+            make.leading.equalToSuperview().offset(10)
         }
     }
     
