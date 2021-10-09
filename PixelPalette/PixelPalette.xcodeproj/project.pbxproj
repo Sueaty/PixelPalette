@@ -124,11 +124,11 @@
 		80F2083E26B17DCC00E35BB1 /* PixelPalette */ = {
 			isa = PBXGroup;
 			children = (
-				80948FB42710CF170045AF29 /* Localize */,
 				809314BC26E9DB7A000C1A16 /* Model */,
 				80F2086626B6988B00E35BB1 /* Extension */,
 				80F2085C26B17EED00E35BB1 /* App */,
 				80F2085B26B17EE600E35BB1 /* Common */,
+				80948FB42710CF170045AF29 /* Localize */,
 				80F2083F26B17DCC00E35BB1 /* AppDelegate.swift */,
 				80F2084126B17DCC00E35BB1 /* SceneDelegate.swift */,
 				80F2084526B17DCC00E35BB1 /* Main.storyboard */,

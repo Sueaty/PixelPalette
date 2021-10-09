@@ -109,6 +109,10 @@ final class MainViewController: BaseViewController {
         
         mediaController.delegate = self
         pickerView.delegate = self
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self,
+                                                          action: #selector(tappedImageView(_:)))
+        imageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func setViewHierarchy() {
@@ -172,6 +176,12 @@ final class MainViewController: BaseViewController {
 }
 
 private extension MainViewController {
+    
+    // When user taps on image to change picker view's position
+    @objc func tappedImageView(_ sender: UITapGestureRecognizer) {
+        let tappedLocation = sender.location(in: sender.view)
+        pickerView.center = tappedLocation
+    }
     
     // When 'photos' button is tapped,
     @objc func didTapPhotosButton(_ sender: UIButton) {

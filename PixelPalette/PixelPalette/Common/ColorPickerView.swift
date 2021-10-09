@@ -13,6 +13,7 @@ protocol ColorPickerDelegate {
 }
 
 final class ColorPickerView: BaseView {
+    
     // MARK:- View
     private var borderView: UIView = {
         let view = UIView()
@@ -79,7 +80,7 @@ final class ColorPickerView: BaseView {
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         super.point(inside: point, with: event)
-        let touchArea = bounds.insetBy(dx: -30, dy: -30)
+        let touchArea = bounds.insetBy(dx: -50, dy: -50)
         return touchArea.contains(point)
     }
     
