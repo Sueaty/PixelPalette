@@ -91,7 +91,7 @@ final class SingleColorViewController: BaseViewController {
         colorInfoStackView.addArrangedSubview(hexStringLabel)
         colorInfoStackView.addArrangedSubview(rgbaLabel)
         backgroundView.addSubview(saveButton)
-        view.addSubview(deleteButton)
+        backgroundView.addSubview(deleteButton)
     }
     
     override func setViewConstraint() {
