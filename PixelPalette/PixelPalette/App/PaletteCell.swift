@@ -8,6 +8,7 @@
 import UIKit
 
 final class PaletteCell: UICollectionViewCell {
+    
     // MARK:- Views
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
