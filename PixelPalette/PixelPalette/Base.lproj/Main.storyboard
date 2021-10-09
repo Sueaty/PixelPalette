@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Picker-->
+        <!--Main View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="PixelPalette" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,7 +18,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Picker" image="photo.fill" catalog="system" id="9Jb-44-w6t"/>
+                    <tabBarItem key="tabBarItem" title="" image="photo.fill" catalog="system" id="9Jb-44-w6t"/>
                     <navigationItem key="navigationItem" id="I6A-Pe-toz"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -68,11 +68,11 @@
             </objects>
             <point key="canvasLocation" x="89.855072463768124" y="88.392857142857139"/>
         </scene>
-        <!--Palette-->
+        <!--Navigation Controller-->
         <scene sceneID="rSa-AP-jY5">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ehS-Pj-XKC" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Palette" image="paintpalette.fill" catalog="system" id="6Ya-2E-ur3"/>
+                    <tabBarItem key="tabBarItem" title="" image="paintpalette.fill" catalog="system" id="6Ya-2E-ur3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="dCG-N8-2QW">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>

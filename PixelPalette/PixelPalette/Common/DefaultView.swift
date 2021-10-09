@@ -21,7 +21,7 @@ final class DefaultView: BaseView {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.alpha = 0.3
-        imageView.image = UIImage(systemName: "plus.app")
+        imageView.image = UIImage(systemName: "paintbrush.fill")
         imageView.image?.withTintColor(.orange)
         return imageView
     }()
@@ -47,9 +47,9 @@ final class DefaultView: BaseView {
     override func setUI() {
         switch type {
         case .Picker:
-            infoLabel.text = "Choose Your Photo"
+            infoLabel.text = "Choose Your Photo".localize()
         case .Library:
-            infoLabel.text = "Create Your Own Color!"
+            infoLabel.text = "Create Your Own Color".localize()
         }
     }
     

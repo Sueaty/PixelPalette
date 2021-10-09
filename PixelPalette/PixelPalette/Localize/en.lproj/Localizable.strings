@@ -1,0 +1,32 @@
+/* 
+  Localizable.strings (ENG)
+  PixelPalette
+
+  Created by Sue Cho on 2021/10/09.
+  
+*/
+
+// MARK:- UIElement Text
+"S A V E" = "S A V E";
+"Choose Your Photo" = "Choose Your Photo";
+"Create Your Own Color" = "Create Your Own Color";
+
+// MARK:- Placeholder Text
+"Give a name to your color" = "Give a name to your color";
+
+// MARK:- Alert View Message
+"Save" = "Save";
+"Cancel" = "Cancel";
+"Delete" = "Delete";
+"Settings" = "Settings";
+"Delete Color?" = "Delete Color?";
+"Access to Photos Denied" = "Access to Photos Denied";
+"Please go to the Settings to allow access to your Photos" = "Please go to the Settings to allow access to your Photos";
+"Would you like to delete %@?" = "Would you like to delete %@?";
+
+// MARK:- Toast Message
+"Give a Name to Save the Color" = "Give a Name to Save the Color";
+"Color Name Edited" = "Color Name Edited";
+"Color Saved" = "Color Saved";
+"Color Deleted" = "Color Deleted";
+

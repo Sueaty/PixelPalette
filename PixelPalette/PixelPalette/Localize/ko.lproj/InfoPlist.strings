@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings (KOR)
+  PixelPalette
+
+  Created by Sue Cho on 2021/10/09.
+  
+*/
+
+CFBundleDisplayName = "Pixel Palette";
+NSPhotoLibraryUsageDescription = "색 선택을 위한 사진을 불러오기 위해 사진첩에 접근합니다. ";

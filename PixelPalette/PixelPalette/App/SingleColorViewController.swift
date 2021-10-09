@@ -28,6 +28,7 @@ final class SingleColorViewController: BaseViewController {
         let view = UIView(frame: CGRect(origin: CGPoint(x: 0, y: 0),
                                         size: CGSize(width: view.frame.width - 38, height: 150)))
         view.backgroundColor = .white
+        view.layer.cornerRadius = 3
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -64,7 +65,7 @@ final class SingleColorViewController: BaseViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Save", for: .normal)
+        button.setTitle("Save".localize(), for: .normal)
         button.addTarget(self, action: #selector(didPressSaveButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -72,10 +73,8 @@ final class SingleColorViewController: BaseViewController {
     
     private lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Delete", for: .normal)
+        button.setTitle("Delete".localize(), for: .normal)
         button.setTitleColor(.red, for: .normal)
-        button.backgroundColor = .lightGray.withAlphaComponent(0.9)
-        button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(didPressDeleteButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -114,10 +113,19 @@ final class SingleColorViewController: BaseViewController {
             make.bottom.equalToSuperview().offset(-45)
         }
         
-        colorInfoStackView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(5)
-            make.trailing.equalToSuperview().offset(-5)
-            make.bottom.equalToSuperview().offset(-8)
+        guard let color = colorModel?.color else { return }
+        if color.isLight {
+            colorInfoStackView.snp.makeConstraints { make in
+                make.leading.equalToSuperview().offset(5)
+                make.trailing.equalToSuperview().offset(-5)
+                make.bottom.equalToSuperview().offset(-8)
+            }
+        } else {
+            colorInfoStackView.snp.makeConstraints { make in
+                make.leading.equalTo(decorationView)
+                make.trailing.equalTo(decorationView)
+                make.bottom.equalTo(decorationView)
+            }
         }
         
         saveButton.snp.makeConstraints { make in
@@ -126,10 +134,8 @@ final class SingleColorViewController: BaseViewController {
         }
         
         deleteButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(backgroundView.snp.bottom).offset(15)
-            make.width.equalTo(widthLength)
-            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(5)
+            make.leading.equalToSuperview().offset(-10)
         }
     }
     
@@ -204,11 +210,11 @@ private extension SingleColorViewController {
     
     // Delete color from CoreData when 'Delete' button is pressed
     @objc func didPressDeleteButton(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Delete Color",
-                                      message: "Would you like to delete \(colorModel!.name)?",
+        let alert = UIAlertController(title: "Delete Color?".localize(),
+                                      message: "Would you like to delete %@?".localize(with: colorModel!.name),
                                       preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let delete = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+        let cancel = UIAlertAction(title: "Cancel".localize(), style: .cancel)
+        let delete = UIAlertAction(title: "Delete".localize(), style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             let fetchColor: NSFetchRequest<Color> = Color.fetchRequest()
             fetchColor.predicate = NSPredicate(format: "name = %@", self.colorModel!.name as String)
