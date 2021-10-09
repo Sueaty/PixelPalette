@@ -34,17 +34,19 @@ And there's not need to keep them when you don't want it anymore.<br/>
 Delete the from your palette freely.<br/>
 
 
-### Examples
+### App Preview
 
-| Finding Your Color | Saving Your Color | Edit Name | Delete Color
-| ----------- | ----------- | ----------- | ----------- |
-| <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/choosing_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/save_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/edit_color.gif?raw=true"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/delete_color.gif?raw=true"> |
-
+|  |  |  |  |  |
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview1.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview2.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview3.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview4.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview5.png"> |
 
 ## Version Update <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 <b>ver 1.0.0</b>
 * App Store Release
 
+<b>ver 1.1.0</b>
+* Support new language (Korean)
+* Allow user to tap on image to move picker
 
 ## Reach Out! <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
@@ -53,4 +55,4 @@ Whenever you a find a nagging bug or if you came up with a great idea for this a
 All your comments and emails are welcomed.<br/><br/>
 
 e-mail 💌: sueaty.cho@gmail.com <br/>
-instagram 🎞 : @pixel.palette__
+instagram 🎞 : <a href="https://www.instagram.com/pixel.palette__/">@pixel.palette__</a>
