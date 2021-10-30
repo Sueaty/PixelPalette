@@ -19,6 +19,7 @@ final class MainViewController: BaseViewController {
         let label = UILabel()
         label.text = "Picker"
         label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -55,19 +56,6 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
-    private lazy var imageScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.frame = CGRect(origin: .zero,
-                                  size: view.frame.size)
-        scrollView.contentSize = imageView.frame.size
-        scrollView.bounces = false
-        scrollView.clipsToBounds = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = true
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
@@ -96,12 +84,6 @@ final class MainViewController: BaseViewController {
             pickerView.color = pickedColor
         }
     }
-    private var statusBarHeight: CGFloat {
-        return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-    }
-    private var tabbarHeight: CGFloat {
-        return tabBarController!.tabBar.frame.height
-    }
 
     // MARK:- Override Functions
     override func setInit() {
@@ -122,10 +104,8 @@ final class MainViewController: BaseViewController {
         view.addSubview(saveButton)
         view.addSubview(imageLoadButton)
         view.addSubview(defaultView!)
-        view.addSubview(imageScrollView)
-        imageScrollView.addSubview(imageView)
-        imageScrollView.addSubview(pickerView)
-        imageScrollView.bringSubviewToFront(pickerView)
+        view.addSubview(imageView)
+        imageView.addSubview(pickerView)
     }
     
     override func setViewConstraint() {
@@ -155,24 +135,15 @@ final class MainViewController: BaseViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
-
-        imageScrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
-            make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
-        }
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(imageScrollView.contentLayoutGuide.snp.top)
-            make.bottom.equalTo(imageScrollView.contentLayoutGuide.snp.bottom)
-            make.leading.equalTo(imageScrollView.contentLayoutGuide.snp.leading)
-            make.trailing.equalTo(imageScrollView.contentLayoutGuide.snp.trailing)
-            
-            make.height.equalTo(imageScrollView.frameLayoutGuide.snp.height)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(view.frame.width)
         }
     }
-
+    
 }
 
 private extension MainViewController {
@@ -218,13 +189,9 @@ private extension MainViewController {
     
     // Reset Image when new image is loaded
     func resetImageCondition() {
-        /// Scroll image to the left (beginning)
-        let leftContentOffset = CGPoint(x: -imageScrollView.contentInset.left, y: 0)
-        imageScrollView.setContentOffset(leftContentOffset, animated: true)
-        
         /// Reset image's width constraint
         widthConstraint?.deactivate()
-        let viewHeight = imageScrollView.frame.height
+        let viewHeight = imageView.frame.height
         let imageHeight = image!.size.height
         let imageWidth = image!.size.width
         let increaseRatio = viewHeight / imageHeight
@@ -240,8 +207,8 @@ private extension MainViewController {
         pickerView.imageView = imageView
         
         /// set picker's position to center
-        let centerPoint = CGPoint(x: imageScrollView.center.x,
-                                  y: imageScrollView.frame.size.height / 2)
+        let centerPoint = CGPoint(x: imageView.center.x,
+                                  y: imageView.frame.size.height / 2)
         pickerView.lastLocation = centerPoint
         pickerView.center = centerPoint
         
@@ -325,18 +292,22 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         defaultView?.removeFromSuperview()
         
-        guard let originalImage = info[.originalImage] as? UIImage else { return }
-        image = originalImage
+        //guard let originalImage = info[.originalImage] as? UIImage else { return }
+        //image = originalImage
+        //imageView.image = image
+        guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        image = editedImage
         imageView.image = image
         
         picker.dismiss(animated: true, completion: nil)
     }
-    
+
     func presentPhotoLibrary() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.mediaController.sourceType = .photoLibrary
-            self.mediaController.allowsEditing = false
+            self.mediaController.allowsEditing = true
+            self.mediaController.modalPresentationStyle = .fullScreen
             self.present(self.mediaController, animated: true)
         }
     }
@@ -346,7 +317,7 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-        pickedColor = imageScrollView.colorOfPoint(point: location)
+        pickedColor = imageView.colorOfPoint(point: location)
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
