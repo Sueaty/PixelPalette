@@ -35,21 +35,9 @@ final class ColorPickerView: BaseView {
     }()
     
     // MARK:- Properties
-    var color: UIColor? {
-        didSet {
-            guard let color = color else { return }
-            if color.isLight {
-                borderView.layer.borderColor = UIColor.black.cgColor
-                indicatorView.layer.borderColor = UIColor.black.cgColor
-            } else {
-                borderView.layer.borderColor = UIColor.white.cgColor
-                indicatorView.layer.borderColor = UIColor.white.cgColor
-            }
-        }
-    }
+    var color: UIColor?
     var delegate: ColorPickerDelegate?
     var lastLocation = CGPoint(x: 0, y: 0)
-    var imageView: UIImageView = UIImageView()
     
     // MARK:- Override Methods
     override func setInit() {
@@ -97,14 +85,15 @@ private extension ColorPickerView {
     }
 
     func setNewCenterPosition(_ sender: UIPanGestureRecognizer) {
+        guard let superview = superview else { return }
         let translation = sender.translation(in: self.superview)
 
-        let minCenterX = frame.size.width / 2
-        let maxCenterX = imageView.frame.width - frame.size.width / 2
+        let minCenterX = CGFloat(0)
+        let maxCenterX = superview.frame.width - 1
         let newCenterX = center.x + translation.x
 
-        let minCenterY = imageView.frame.origin.y
-        let maxCenterY = minCenterY + imageView.frame.size.height
+        let minCenterY = CGFloat(0)
+        let maxCenterY = superview.frame.height - 1
         let newCenterY = center.y + translation.y
 
         center.x = min(maxCenterX, max(minCenterX, newCenterX))

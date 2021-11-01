@@ -59,7 +59,7 @@ final class MainViewController: BaseViewController {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -75,7 +75,6 @@ final class MainViewController: BaseViewController {
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
-            resetImageCondition()
             resetPickerCondition()
         }
     }
@@ -105,8 +104,7 @@ final class MainViewController: BaseViewController {
         view.addSubview(imageLoadButton)
         view.addSubview(defaultView!)
         view.addSubview(imageView)
-        imageView.addSubview(pickerView)
-    }
+        imageView.addSubview(pickerView)    }
     
     override func setViewConstraint() {
         super.setViewConstraint()
@@ -138,8 +136,7 @@ final class MainViewController: BaseViewController {
         
         imageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
             make.height.equalTo(view.frame.width)
         }
     }
@@ -187,33 +184,13 @@ private extension MainViewController {
         if pickedColor != nil { showSaveAlert() }
     }
     
-    // Reset Image when new image is loaded
-    func resetImageCondition() {
-        /// Reset image's width constraint
-        widthConstraint?.deactivate()
-        let viewHeight = imageView.frame.height
-        let imageHeight = image!.size.height
-        let imageWidth = image!.size.width
-        let increaseRatio = viewHeight / imageHeight
-        imageView.snp.makeConstraints { make in
-            widthConstraint = make.width.equalTo(imageWidth * increaseRatio).priority(999).constraint
-        }
-        widthConstraint?.activate()
-    }
-    
     // Reset Picker when new image is loaded
     func resetPickerCondition() {
-        /// set pickerview's property
-        pickerView.imageView = imageView
-        
         /// set picker's position to center
         let centerPoint = CGPoint(x: imageView.center.x,
                                   y: imageView.frame.size.height / 2)
         pickerView.lastLocation = centerPoint
         pickerView.center = centerPoint
-        
-        /// set picker's initial color
-        pickedColor = imageView.colorOfPoint(point: centerPoint)
         
         /// reveal picker view
         pickerView.isHidden = false
@@ -292,9 +269,6 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         defaultView?.removeFromSuperview()
         
-        //guard let originalImage = info[.originalImage] as? UIImage else { return }
-        //image = originalImage
-        //imageView.image = image
         guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
         image = editedImage
         imageView.image = image
