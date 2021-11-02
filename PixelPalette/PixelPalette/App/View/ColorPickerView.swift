@@ -9,35 +9,23 @@
 import UIKit
 
 protocol ColorPickerDelegate {
-    func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint)
+    func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint)
 }
 
 final class ColorPickerView: BaseView {
     
     // MARK:- View
-    private var borderView: UIView = {
+    lazy var colorPicker: UIView = {
         let view = UIView()
-        view.backgroundColor = .clear
-        view.bounds.size = CGSize(width: 40, height: 40)
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.borderWidth = 4
+        view.layer.borderColor = UIColor.white.cgColor
         view.layer.cornerRadius = 20
-        return view
-    }()
-    
-    private var indicatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.bounds.size = CGSize(width: 11, height: 11)
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.black.cgColor
         return view
     }()
     
     // MARK:- Properties
     var color: UIColor?
     var delegate: ColorPickerDelegate?
-    var lastLocation = CGPoint(x: 0, y: 0)
     
     // MARK:- Override Methods
     override func setInit() {
@@ -51,18 +39,12 @@ final class ColorPickerView: BaseView {
     }
     
     override func setViewHierarchy() {
-        addSubview(borderView)
-        addSubview(indicatorView)
+        addSubview(colorPicker)
     }
     
     override func setViewConstraint() {
-        borderView.snp.makeConstraints { make in
+        colorPicker.snp.makeConstraints { make in
             make.leading.trailing.top.bottom.equalToSuperview()
-        }
-        
-        indicatorView.snp.makeConstraints { make in
-            make.width.height.equalTo(11)
-            make.center.equalToSuperview()
         }
     }
     
@@ -71,17 +53,23 @@ final class ColorPickerView: BaseView {
         let touchArea = bounds.insetBy(dx: -50, dy: -50)
         return touchArea.contains(point)
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        lastLocation = self.center
-    }
+
 }
 
 private extension ColorPickerView {
 
     @objc func panColorPicker(_ sender: UIPanGestureRecognizer) {
-        setNewCenterPosition(sender)
-        delegate?.didMoveImagePicker(self, didMoveImagePicker: CGPoint(x: center.x, y: center.y))
+        switch sender.state {
+        case .changed:
+            delegate?.didMoveColorPicker(self, didMoveColorPicker: CGPoint(x: center.x, y: center.y))
+            setNewCenterPosition(sender)
+            setPickerBorderColor()
+        case .ended:
+            colorPicker.backgroundColor = color
+            colorPicker.layer.borderColor = UIColor.white.cgColor
+        default:
+            break
+        }
     }
 
     func setNewCenterPosition(_ sender: UIPanGestureRecognizer) {
@@ -102,4 +90,9 @@ private extension ColorPickerView {
         sender.setTranslation(.zero, in: self)
     }
 
+    func setPickerBorderColor() {
+        guard let color = color else { return }
+        colorPicker.backgroundColor = .clear
+        colorPicker.layer.borderColor = color.cgColor
+    }
 }

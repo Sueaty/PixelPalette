@@ -90,10 +90,6 @@ final class MainViewController: BaseViewController {
         
         mediaController.delegate = self
         pickerView.delegate = self
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self,
-                                                          action: #selector(tappedImageView(_:)))
-        imageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func setViewHierarchy() {
@@ -104,7 +100,8 @@ final class MainViewController: BaseViewController {
         view.addSubview(imageLoadButton)
         view.addSubview(defaultView!)
         view.addSubview(imageView)
-        imageView.addSubview(pickerView)    }
+        imageView.addSubview(pickerView)
+    }
     
     override func setViewConstraint() {
         super.setViewConstraint()
@@ -145,12 +142,6 @@ final class MainViewController: BaseViewController {
 
 private extension MainViewController {
     
-    // When user taps on image to change picker view's position
-    @objc func tappedImageView(_ sender: UITapGestureRecognizer) {
-        let tappedLocation = sender.location(in: sender.view)
-        pickerView.center = tappedLocation
-    }
-    
     // When 'photos' button is tapped,
     @objc func didTapPhotosButton(_ sender: UIButton) {
         /// check for authorization status
@@ -189,9 +180,12 @@ private extension MainViewController {
         /// set picker's position to center
         let centerPoint = CGPoint(x: imageView.center.x,
                                   y: imageView.frame.size.height / 2)
-        pickerView.lastLocation = centerPoint
         pickerView.center = centerPoint
         
+        /// reset picker's view
+        pickerView.colorPicker.backgroundColor = .clear
+        pickerView.colorPicker.layer.borderColor = UIColor.white.cgColor
+
         /// reveal picker view
         pickerView.isHidden = false
     }
@@ -290,10 +284,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 
 extension MainViewController: ColorPickerDelegate {
     
-    func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
+    func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint) {
         pickedColor = imageView.colorOfPoint(point: location)
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
-
+    
 }

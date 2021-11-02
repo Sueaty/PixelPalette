@@ -90,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				809314BF26EA3861000C1A16 /* TitleHeaderView.swift */,
+				80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -154,7 +155,6 @@
 				80F2086326B17F1D00E35BB1 /* BaseViewController.swift */,
 				80BE016E26D3854200491F47 /* BaseView.swift */,
 				80BE016B26D384BE00491F47 /* DefaultView.swift */,
-				80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
