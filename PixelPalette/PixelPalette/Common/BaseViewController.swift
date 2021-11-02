@@ -32,6 +32,8 @@ class BaseViewController: UIViewController {
     
     func setUI() {
         // override here
+        view.backgroundColor = UIColor(hexString: "#4d4848")
+        tabBarController?.tabBar.barTintColor = UIColor(hexString: "#4d4848")
     }
     
 }

@@ -19,6 +19,7 @@ final class MainViewController: BaseViewController {
         let label = UILabel()
         label.text = "Picker"
         label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -55,23 +56,10 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
-    private lazy var imageScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.frame = CGRect(origin: .zero,
-                                  size: view.frame.size)
-        scrollView.contentSize = imageView.frame.size
-        scrollView.bounces = false
-        scrollView.clipsToBounds = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = true
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -87,7 +75,6 @@ final class MainViewController: BaseViewController {
     private lazy var mediaController = UIImagePickerController()
     private var image: UIImage? {
         didSet {
-            resetImageCondition()
             resetPickerCondition()
         }
     }
@@ -96,12 +83,6 @@ final class MainViewController: BaseViewController {
             pickerView.color = pickedColor
         }
     }
-    private var statusBarHeight: CGFloat {
-        return view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-    }
-    private var tabbarHeight: CGFloat {
-        return tabBarController!.tabBar.frame.height
-    }
 
     // MARK:- Override Functions
     override func setInit() {
@@ -109,10 +90,6 @@ final class MainViewController: BaseViewController {
         
         mediaController.delegate = self
         pickerView.delegate = self
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self,
-                                                          action: #selector(tappedImageView(_:)))
-        imageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func setViewHierarchy() {
@@ -122,10 +99,8 @@ final class MainViewController: BaseViewController {
         view.addSubview(saveButton)
         view.addSubview(imageLoadButton)
         view.addSubview(defaultView!)
-        view.addSubview(imageScrollView)
-        imageScrollView.addSubview(imageView)
-        imageScrollView.addSubview(pickerView)
-        imageScrollView.bringSubviewToFront(pickerView)
+        view.addSubview(imageView)
+        imageView.addSubview(pickerView)
     }
     
     override func setViewConstraint() {
@@ -155,33 +130,17 @@ final class MainViewController: BaseViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }
-
-        imageScrollView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
-            make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
-        }
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(imageScrollView.contentLayoutGuide.snp.top)
-            make.bottom.equalTo(imageScrollView.contentLayoutGuide.snp.bottom)
-            make.leading.equalTo(imageScrollView.contentLayoutGuide.snp.leading)
-            make.trailing.equalTo(imageScrollView.contentLayoutGuide.snp.trailing)
-            
-            make.height.equalTo(imageScrollView.frameLayoutGuide.snp.height)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(view.frame.width)
         }
     }
-
+    
 }
 
 private extension MainViewController {
-    
-    // When user taps on image to change picker view's position
-    @objc func tappedImageView(_ sender: UITapGestureRecognizer) {
-        let tappedLocation = sender.location(in: sender.view)
-        pickerView.center = tappedLocation
-    }
     
     // When 'photos' button is tapped,
     @objc func didTapPhotosButton(_ sender: UIButton) {
@@ -216,38 +175,17 @@ private extension MainViewController {
         if pickedColor != nil { showSaveAlert() }
     }
     
-    // Reset Image when new image is loaded
-    func resetImageCondition() {
-        /// Scroll image to the left (beginning)
-        let leftContentOffset = CGPoint(x: -imageScrollView.contentInset.left, y: 0)
-        imageScrollView.setContentOffset(leftContentOffset, animated: true)
-        
-        /// Reset image's width constraint
-        widthConstraint?.deactivate()
-        let viewHeight = imageScrollView.frame.height
-        let imageHeight = image!.size.height
-        let imageWidth = image!.size.width
-        let increaseRatio = viewHeight / imageHeight
-        imageView.snp.makeConstraints { make in
-            widthConstraint = make.width.equalTo(imageWidth * increaseRatio).priority(999).constraint
-        }
-        widthConstraint?.activate()
-    }
-    
     // Reset Picker when new image is loaded
     func resetPickerCondition() {
-        /// set pickerview's property
-        pickerView.imageView = imageView
-        
         /// set picker's position to center
-        let centerPoint = CGPoint(x: imageScrollView.center.x,
-                                  y: imageScrollView.frame.size.height / 2)
-        pickerView.lastLocation = centerPoint
+        let centerPoint = CGPoint(x: imageView.center.x,
+                                  y: imageView.frame.size.height / 2)
         pickerView.center = centerPoint
         
-        /// set picker's initial color
-        pickedColor = imageView.colorOfPoint(point: centerPoint)
-        
+        /// reset picker's view
+        pickerView.colorPicker.backgroundColor = .clear
+        pickerView.colorPicker.layer.borderColor = UIColor.white.cgColor
+
         /// reveal picker view
         pickerView.isHidden = false
     }
@@ -325,18 +263,19 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         defaultView?.removeFromSuperview()
         
-        guard let originalImage = info[.originalImage] as? UIImage else { return }
-        image = originalImage
+        guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        image = editedImage
         imageView.image = image
         
         picker.dismiss(animated: true, completion: nil)
     }
-    
+
     func presentPhotoLibrary() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.mediaController.sourceType = .photoLibrary
-            self.mediaController.allowsEditing = false
+            self.mediaController.allowsEditing = true
+            self.mediaController.modalPresentationStyle = .fullScreen
             self.present(self.mediaController, animated: true)
         }
     }
@@ -345,10 +284,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 
 extension MainViewController: ColorPickerDelegate {
     
-    func didMoveImagePicker(_ view: ColorPickerView, didMoveImagePicker location: CGPoint) {
-        pickedColor = imageScrollView.colorOfPoint(point: location)
+    func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint) {
+        pickedColor = imageView.colorOfPoint(point: location)
         saveButton.backgroundColor = pickedColor
         saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
     }
-
+    
 }
