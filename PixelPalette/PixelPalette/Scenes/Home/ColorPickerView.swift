@@ -18,7 +18,6 @@ final class ColorPickerView: BaseView {
     lazy var colorPicker: UIView = {
         let view = UIView()
         view.layer.borderWidth = 4
-        view.layer.borderColor = UIColor.white.cgColor
         view.layer.cornerRadius = 20
         return view
     }()
@@ -48,10 +47,23 @@ final class ColorPickerView: BaseView {
         }
     }
     
+    override func setUI() {
+        resetPickerCondition()
+    }
+    
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         super.point(inside: point, with: event)
         let touchArea = bounds.insetBy(dx: -50, dy: -50)
         return touchArea.contains(point)
+    }
+    
+    func resetPickerCondition() {
+        guard let superview = superview else { return }
+        center = CGPoint(x: superview.center.x,
+                         y: superview.frame.height / 2)
+        colorPicker.backgroundColor = .clear
+        colorPicker.layer.borderColor = UIColor.white.cgColor
+        isHidden = false
     }
 
 }
