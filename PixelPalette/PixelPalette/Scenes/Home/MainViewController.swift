@@ -10,7 +10,6 @@ import Photos
 import SnapKit
 import CoreData
 import Toast_Swift
-import AudioToolbox
 
 final class MainViewController: BaseViewController {
     
@@ -70,19 +69,15 @@ final class MainViewController: BaseViewController {
         return pickerView
     }()
     
+    private lazy var preview: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     // MARK:- Properties
-    private var widthConstraint: Constraint?
     private lazy var mediaController = UIImagePickerController()
-    private var image: UIImage? {
-        didSet {
-            resetPickerCondition()
-        }
-    }
-    private var pickedColor: UIColor? {
-        didSet {
-            pickerView.color = pickedColor
-        }
-    }
+    private lazy var currentColor = CurrentColor(imageView: imageView)
 
     // MARK:- Override Functions
     override func setInit() {
@@ -132,126 +127,61 @@ final class MainViewController: BaseViewController {
         }
         
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(90)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(view.frame.width)
+            make.centerY.equalToSuperview()
         }
     }
     
 }
 
 private extension MainViewController {
-    
-    // When 'photos' button is tapped,
+
     @objc func didTapPhotosButton(_ sender: UIButton) {
-        /// check for authorization status
         let authState = PHPhotoLibrary.authorizationStatus()
-        
-        /// Case #1 : Authorized
-        if authState == .authorized {
-            /// open photos library
+        switch authState {
+        case .authorized:
             presentPhotoLibrary()
-        }
-        /// Case #2 : Not Determined
-        else if authState == .notDetermined {
-            /// request for authorization
+        case .notDetermined:
             PHPhotoLibrary.requestAuthorization { [unowned self] state in
-                /// if user authorizes, then open photos library
                 if state == .authorized {
                     self.presentPhotoLibrary()
                 }
             }
-        }
-        /// Case #3 : No Authorization
-        else {
-            /// ask user to authorize app in the Settings
-            showAccessAuthAlert()
-        }
-    }
-    
-    // When 'save' button is tapped
-    @objc func didTapSaveButton(_ sender: UIButton) {
-        /// If picker view has picked a color, ask user if he/she wants to save the color
-        if pickedColor != nil { showSaveAlert() }
-    }
-    
-    // Reset Picker when new image is loaded
-    func resetPickerCondition() {
-        /// set picker's position to center
-        let centerPoint = CGPoint(x: imageView.center.x,
-                                  y: imageView.frame.size.height / 2)
-        pickerView.center = centerPoint
-        
-        /// reset picker's view
-        pickerView.colorPicker.backgroundColor = .clear
-        pickerView.colorPicker.layer.borderColor = UIColor.white.cgColor
-
-        /// reveal picker view
-        pickerView.isHidden = false
-    }
-    
-    // Alert to navigate user to Setting for Photos Library authorization
-    func showAccessAuthAlert() {
-        let alert = UIAlertController(title: "Access to Photos Denied".localize(),
-                                      message: "Please go to Settings to allow access to your Photos".localize(),
-                                      preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel".localize(), style: .cancel, handler: nil)
-        let confirm = UIAlertAction(title: "Settings".localize(), style: .default, handler: { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                      options: [:],
-                                      completionHandler: nil)
-        })
-        
-        alert.addAction(cancel)
-        alert.addAction(confirm)
-        present(alert, animated: false, completion: nil)
-    }
-    
-    // Alert to save color
-    func showSaveAlert() {
-        guard let colorHexValue = pickedColor?.toHexString().uppercased() else { return }
-        let alert = UIAlertController(title: colorHexValue, message: nil, preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel".localize(), style: .cancel)
-        let save = UIAlertAction(title: "Save".localize(), style: .default) { [weak self] action in
-            guard let self = self,
-                  let colorName = alert.textFields?[0].text else { return }
-            
-            if colorName.isEmpty {
-                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                self.view.makeToast("Give a Name to Save the Color".localize())
-            } else {
-                // save color to core data
-                self.saveColor(name: colorName, hex: colorHexValue)
-                self.view.makeToast("Color Saved".localize())
+        default:
+            presentDestructiveAlert(title: "Access to Photos Denied".localize(),
+                                    message: "Please go to Settings to allow access to your Photos".localize()) { _ in
+                guard let settingURL = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(settingURL, options: [:])
             }
         }
-        
-        alert.addAction(save)
-        alert.addAction(cancel)
-    
-        alert.addTextField { textField in
-            textField.placeholder = "Give a name to your color".localize()
-        }
-        present(alert, animated: false, completion: nil)
     }
     
-    // Save color in CoreData
-    func saveColor(name: String, hex: String) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
+    @objc func didTapSaveButton(_ sender: UIButton) {
+        guard currentColor.color != nil,
+              let hexValue = currentColor.hex else { return }
+        
+        presentTextFieldAlert(title: hexValue,
+                              message: nil,
+                              placeholder: "Give a name to your color".localize()) { [unowned self] colorName in
+            self.saveColor(name: colorName, hex: hexValue)
         }
+    }
+    
+    func saveColor(name: String, hex: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return}
+        
         let managedContext = appDelegate.persistentContainer.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "Color",
-                                                in: managedContext)!
-        let color = NSManagedObject(entity: entity,
-                                    insertInto: managedContext)
+        let entity = NSEntityDescription.entity(forEntityName: "Color", in: managedContext)!
+        let color = NSManagedObject(entity: entity, insertInto: managedContext)
         color.setValue(name, forKey: "name")
         color.setValue(hex, forKey: "hexValue")
         
         do {
             try managedContext.save()
         } catch let error as NSError {
-            print("Failed to save : \(error) \(error.userInfo)")
+            defaultAlertController(title: "Error",
+                                   message: "Failed to save due to an error : \(error) \(error.userInfo)")
         }
     }
     
@@ -264,18 +194,18 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
         defaultView?.removeFromSuperview()
         
         guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
-        image = editedImage
-        imageView.image = image
+        imageView.image = editedImage
+        pickerView.resetPickerCondition()
         
         picker.dismiss(animated: true, completion: nil)
     }
 
     func presentPhotoLibrary() {
+        mediaController.sourceType = .photoLibrary
+        mediaController.allowsEditing = true
+        mediaController.modalPresentationStyle = .fullScreen
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.mediaController.sourceType = .photoLibrary
-            self.mediaController.allowsEditing = true
-            self.mediaController.modalPresentationStyle = .fullScreen
             self.present(self.mediaController, animated: true)
         }
     }
@@ -285,9 +215,10 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 extension MainViewController: ColorPickerDelegate {
     
     func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint) {
-        pickedColor = imageView.colorOfPoint(point: location)
-        saveButton.backgroundColor = pickedColor
-        saveButton.titleLabel!.textColor = pickedColor!.isLight ? .black : .white
+        currentColor.location = location
+        pickerView.color = currentColor.color
+        saveButton.backgroundColor = currentColor.color
+        //saveButton.titleLabel!.textColor = currentColor.color.isLight ? .black : .white
     }
     
 }
