@@ -15,6 +15,7 @@
 "Give a name to your color" = "Give a name to your color";
 
 // MARK:- Alert View Message
+"Confim" = "Confirm";
 "Save" = "Save";
 "Cancel" = "Cancel";
 "Delete" = "Delete";
@@ -27,6 +28,6 @@
 // MARK:- Toast Message
 "Give a Name to Save the Color" = "Give a Name to Save the Color";
 "Color Name Edited" = "Color Name Edited";
-"Color Saved" = "Color Saved";
+"Saved" = "Color Saved";
 "Color Deleted" = "Color Deleted";
 
