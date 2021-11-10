@@ -69,11 +69,13 @@ final class MainViewController: BaseViewController {
         return pickerView
     }()
     
-    private lazy var preview: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private lazy var colorInfoView: ColorInfoView = {
+        let view = ColorInfoView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
+    
+
     
     // MARK:- Properties
     private lazy var mediaController = UIImagePickerController()
@@ -96,6 +98,7 @@ final class MainViewController: BaseViewController {
         view.addSubview(defaultView!)
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
+        view.addSubview(colorInfoView)
     }
     
     override func setViewConstraint() {
@@ -129,7 +132,13 @@ final class MainViewController: BaseViewController {
         imageView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(view.frame.width)
+            //make.top.equalTo(titleLabel.snp.bottom).offset(30)
             make.centerY.equalToSuperview()
+        }
+        
+        colorInfoView.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(10)
+            make.trailing.equalToSuperview().offset(-10)
         }
     }
     
@@ -196,6 +205,7 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
         guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
         imageView.image = editedImage
         pickerView.resetPickerCondition()
+        colorInfoView.resetInfoViewCondition()
         
         picker.dismiss(animated: true, completion: nil)
     }
@@ -217,8 +227,9 @@ extension MainViewController: ColorPickerDelegate {
     func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint) {
         currentColor.location = location
         pickerView.color = currentColor.color
+        colorInfoView.currentColor = currentColor
+        
         saveButton.backgroundColor = currentColor.color
-        //saveButton.titleLabel!.textColor = currentColor.color.isLight ? .black : .white
     }
     
 }

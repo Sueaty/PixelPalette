@@ -28,7 +28,6 @@ final class ColorPickerView: BaseView {
     
     // MARK:- Override Methods
     override func setInit() {
-        bounds.size = CGSize(width: 40, height: 40)
         isUserInteractionEnabled = true
         isHidden = true
         
@@ -48,6 +47,7 @@ final class ColorPickerView: BaseView {
     }
     
     override func setUI() {
+        bounds.size = CGSize(width: 40, height: 40)
         resetPickerCondition()
     }
     
