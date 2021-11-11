@@ -7,7 +7,7 @@
 */
 
 // MARK:- UIElement Text
-"S A V E" = "저 장";
+"SAVE" = "저장";
 "Choose Your Photo" = "사진을 불러오세요";
 "Create Your Own Color" = "당신만의 색을 모아보세요";
 
@@ -15,18 +15,20 @@
 "Give a name to your color" = "색의 이름을 입력해주세요";
 
 // MARK:- Alert View Message
+"Confirm" = "확인";
 "Save" = "저장";
 "Cancel" = "취소";
 "Delete" = "삭제";
 "Settings" = "설정";
 "Delete Color?" = "삭제하시겠습니까?";
+"Save Your Color" = "색 이름 지정";
 "Access to Photos Denied" = "사진첩 접근 권한이 없습니다";
-"Please go to the Settings to allow access to your Photos" = "설정창에서 접근을 허용해주시기 바랍니다.";
+"Please go to Settings to allow access to your Photos" = "설정창에서 접근을 허용해주시기 바랍니다.";
 "Would you like to delete %@?" = "%@를 지우시겠습니까?";
 
 // MARK:- Toast Message
 "Give a Name to Save the Color" = "색의 이름을 정해주세요";
 "Color Name Edited" = "색 이름 변경 완료";
-"Color Saved" = "색 저장 완료";
+"Saved" = "저장 완료";
 "Color Deleted" = "색 삭제 완료";
 
