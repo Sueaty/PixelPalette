@@ -7,7 +7,7 @@
 */
 
 // MARK:- UIElement Text
-"S A V E" = "S A V E";
+"SAVE" = "SAVE";
 "Choose Your Photo" = "Choose Your Photo";
 "Create Your Own Color" = "Create Your Own Color";
 
@@ -21,6 +21,7 @@
 "Delete" = "Delete";
 "Settings" = "Settings";
 "Delete Color?" = "Delete Color?";
+"Save Your Color" = "Save Your Color";
 "Access to Photos Denied" = "Access to Photos Denied";
 "Please go to the Settings to allow access to your Photos" = "Please go to the Settings to allow access to your Photos";
 "Would you like to delete %@?" = "Would you like to delete %@?";

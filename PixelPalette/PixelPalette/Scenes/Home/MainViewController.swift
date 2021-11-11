@@ -25,26 +25,21 @@ final class MainViewController: BaseViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("S A V E".localize(), for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.setTitle("SAVE".localize(), for: .normal)
+        button.setTitleColor(UIColor.init(hexString: "#fdf1bd"), for: .normal)
         button.addTarget(self, action: #selector(didTapSaveButton(_:)), for: .touchUpInside)
-        button.titleLabel?.textColor = .black
-        button.layer.cornerRadius = 5
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
-        button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private lazy var imageLoadButton: UIButton = {
+        let buttonImgConfiguration = UIImage.SymbolConfiguration(pointSize: 25, weight: .bold, scale: .large)
+        let plusImage = UIImage(systemName: "plus",
+                                withConfiguration: buttonImgConfiguration)
         let button = UIButton()
-        button.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+        button.setImage(plusImage, for: .normal)
+        button.tintColor = UIColor.init(hexString: "#fdf1bd")
         button.addTarget(self, action: #selector(didTapPhotosButton(_:)), for: .touchUpInside)
-        button.contentVerticalAlignment = .fill
-        button.contentHorizontalAlignment = .fill
-        button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 1, bottom: 5, right: 1)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -124,10 +119,9 @@ final class MainViewController: BaseViewController {
         }
 
         saveButton.snp.makeConstraints { make in
-            make.height.equalTo(45)
-            make.width.equalTo(130)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
-            make.trailing.equalTo(imageLoadButton.snp.leading).offset(-15)
+            make.trailing.equalTo(imageLoadButton.snp.leading).offset(-30)
+            make.centerY.equalTo(imageLoadButton)
         }
         
         defaultView!.snp.makeConstraints { make in
@@ -164,7 +158,7 @@ private extension MainViewController {
                 }
             }
         default:
-            presentDestructiveAlert(title: "Access to Photos Denied".localize(),
+             presentDestructiveAlert(title: "Access to Photos Denied".localize(),
                                     message: "Please go to Settings to allow access to your Photos".localize()) { _ in
                 guard let settingURL = URL(string: UIApplication.openSettingsURLString) else { return }
                 UIApplication.shared.open(settingURL, options: [:])
@@ -176,8 +170,8 @@ private extension MainViewController {
         guard currentColor.color != nil,
               let hexValue = currentColor.hex else { return }
         
-        presentTextFieldAlert(title: hexValue,
-                              message: nil,
+        presentTextFieldAlert(title: "Save Your Color",
+                              message: hexValue,
                               placeholder: "Give a name to your color".localize()) { [unowned self] colorName in
             self.saveColor(name: colorName, hex: hexValue)
         }
@@ -243,7 +237,6 @@ extension MainViewController: ColorPickerDelegate {
         pickerView.color = currentColor.color
         colorInfoView.currentColor = currentColor
         
-        saveButton.backgroundColor = currentColor.color
         
         previewView.setTouchPoint(location: location)
         previewView.setNeedsDisplay()

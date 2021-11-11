@@ -22,7 +22,7 @@ final class DefaultView: BaseView {
         let imageView = UIImageView()
         imageView.alpha = 0.3
         imageView.image = UIImage(systemName: "paintbrush.fill")
-        imageView.image?.withTintColor(.orange)
+        imageView.tintColor = UIColor.init(hexString: "#fdf1bd")
         return imageView
     }()
     
