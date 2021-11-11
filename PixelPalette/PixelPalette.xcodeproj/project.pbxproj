@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8035289227397DF500C9772E /* UIViewController+AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035289127397DF500C9772E /* UIViewController+AlertController.swift */; };
 		803528942739825800C9772E /* CurrentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803528932739825800C9772E /* CurrentColor.swift */; };
+		80352899273A591000C9772E /* ColorInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80352898273A591000C9772E /* ColorInfoView.swift */; };
+		8035289B273B7B3100C9772E /* ImagePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035289A273B7B3100C9772E /* ImagePreviewView.swift */; };
 		806FFCE526E50A2300BA158A /* UIView+color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806FFCE426E50A2300BA158A /* UIView+color.swift */; };
 		806FFCE726E626D300BA158A /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806FFCE626E626D300BA158A /* UIColor+.swift */; };
 		80700A4B26F5E901002CB6C9 /* SingleColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80700A4A26F5E901002CB6C9 /* SingleColorViewController.swift */; };
@@ -39,6 +41,8 @@
 		46CC2B2BAFA6893798AC24B5 /* Pods-PixelPalette.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PixelPalette.debug.xcconfig"; path = "Target Support Files/Pods-PixelPalette/Pods-PixelPalette.debug.xcconfig"; sourceTree = "<group>"; };
 		8035289127397DF500C9772E /* UIViewController+AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+AlertController.swift"; sourceTree = "<group>"; };
 		803528932739825800C9772E /* CurrentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentColor.swift; sourceTree = "<group>"; };
+		80352898273A591000C9772E /* ColorInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorInfoView.swift; sourceTree = "<group>"; };
+		8035289A273B7B3100C9772E /* ImagePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewView.swift; sourceTree = "<group>"; };
 		806FFCE426E50A2300BA158A /* UIView+color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+color.swift"; sourceTree = "<group>"; };
 		806FFCE626E626D300BA158A /* UIColor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
 		80700A4A26F5E901002CB6C9 /* SingleColorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleColorViewController.swift; sourceTree = "<group>"; };
@@ -95,6 +99,8 @@
 			children = (
 				80F2085F26B17F0C00E35BB1 /* MainViewController.swift */,
 				80F2087426B7E4F300E35BB1 /* ColorPickerView.swift */,
+				80352898273A591000C9772E /* ColorInfoView.swift */,
+				8035289A273B7B3100C9772E /* ImagePreviewView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -322,12 +328,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				80F2086426B17F1D00E35BB1 /* BaseViewController.swift in Sources */,
+				8035289B273B7B3100C9772E /* ImagePreviewView.swift in Sources */,
 				80BE016F26D3854200491F47 /* BaseView.swift in Sources */,
 				806FFCE526E50A2300BA158A /* UIView+color.swift in Sources */,
 				80F2087D26BFF84200E35BB1 /* PaletteViewController.swift in Sources */,
 				809314BB26E9D7CC000C1A16 /* PaletteCell.swift in Sources */,
 				803528942739825800C9772E /* CurrentColor.swift in Sources */,
 				80948FB32710B92D0045AF29 /* String+localize.swift in Sources */,
+				80352899273A591000C9772E /* ColorInfoView.swift in Sources */,
 				80F2084026B17DCC00E35BB1 /* AppDelegate.swift in Sources */,
 				80F2087526B7E4F300E35BB1 /* ColorPickerView.swift in Sources */,
 				806FFCE726E626D300BA158A /* UIColor+.swift in Sources */,

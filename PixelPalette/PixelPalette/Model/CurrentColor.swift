@@ -16,4 +16,11 @@ struct CurrentColor {
     var hex: String? {
         return color?.toHexString()
     }
+    var rgba: [Int]? {
+        return color?.toRGBA()
+    }
+    var rgbText: String? {
+        guard let rgba = rgba else { return "" }
+        return "R : \(rgba[0]) / G : \(rgba[1]) / B : \(rgba[2])"
+    }
 }
