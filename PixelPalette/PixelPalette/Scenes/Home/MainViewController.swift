@@ -57,7 +57,6 @@ final class MainViewController: BaseViewController {
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -68,6 +67,14 @@ final class MainViewController: BaseViewController {
         let pickerView = ColorPickerView()
         return pickerView
     }()
+
+    private lazy var previewView: ImagePreviewView = {
+        let preview = ImagePreviewView()
+        let quarterWidth = view.frame.width / 4
+        preview.frame = CGRect(x: 0, y: 0,
+                               width: quarterWidth, height: quarterWidth)
+        return preview
+    }()
     
     private lazy var colorInfoView: ColorInfoView = {
         let view = ColorInfoView()
@@ -75,11 +82,10 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
-
-    
     // MARK:- Properties
     private lazy var mediaController = UIImagePickerController()
     private lazy var currentColor = CurrentColor(imageView: imageView)
+    
 
     // MARK:- Override Functions
     override func setInit() {
@@ -99,6 +105,7 @@ final class MainViewController: BaseViewController {
         view.addSubview(imageView)
         imageView.addSubview(pickerView)
         view.addSubview(colorInfoView)
+        view.addSubview(previewView)
     }
     
     override func setViewConstraint() {
@@ -132,8 +139,7 @@ final class MainViewController: BaseViewController {
         imageView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(view.frame.width)
-            //make.top.equalTo(titleLabel.snp.bottom).offset(30)
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(40)
         }
         
         colorInfoView.snp.makeConstraints { make in
@@ -178,7 +184,7 @@ private extension MainViewController {
     }
     
     func saveColor(name: String, hex: String) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return}
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "Color", in: managedContext)!
@@ -204,6 +210,7 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
         
         guard let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
         imageView.image = editedImage
+        
         pickerView.resetPickerCondition()
         colorInfoView.resetInfoViewCondition()
         
@@ -211,11 +218,11 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
     }
 
     func presentPhotoLibrary() {
-        mediaController.sourceType = .photoLibrary
-        mediaController.allowsEditing = true
-        mediaController.modalPresentationStyle = .fullScreen
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            self.mediaController.sourceType = .photoLibrary
+            self.mediaController.allowsEditing = true
+            self.mediaController.modalPresentationStyle = .fullScreen
             self.present(self.mediaController, animated: true)
         }
     }
@@ -224,12 +231,26 @@ extension MainViewController: UINavigationControllerDelegate, UIImagePickerContr
 
 extension MainViewController: ColorPickerDelegate {
     
+    func didTouchColorPicker(_ view: ColorPickerView, at location: CGPoint) {
+        previewView.isHidden = false
+        previewView.previewImage = imageView
+        previewView.setTouchPoint(location: location)
+    }
+    
     func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint) {
         currentColor.location = location
+        
         pickerView.color = currentColor.color
         colorInfoView.currentColor = currentColor
         
         saveButton.backgroundColor = currentColor.color
+        
+        previewView.setTouchPoint(location: location)
+        previewView.setNeedsDisplay()
+    }
+    
+    func didFinishMovingColorPicker(_ view: ColorPickerView, at location: CGPoint) {
+        previewView.isHidden = true
     }
     
 }

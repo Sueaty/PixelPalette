@@ -9,7 +9,9 @@
 import UIKit
 
 protocol ColorPickerDelegate {
+    func didTouchColorPicker(_ view: ColorPickerView, at location: CGPoint)
     func didMoveColorPicker(_ view: ColorPickerView, didMoveColorPicker location: CGPoint)
+    func didFinishMovingColorPicker(_ view: ColorPickerView, at location: CGPoint)
 }
 
 final class ColorPickerView: BaseView {
@@ -18,7 +20,7 @@ final class ColorPickerView: BaseView {
     lazy var colorPicker: UIView = {
         let view = UIView()
         view.layer.borderWidth = 4
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 17
         return view
     }()
     
@@ -47,7 +49,7 @@ final class ColorPickerView: BaseView {
     }
     
     override func setUI() {
-        bounds.size = CGSize(width: 40, height: 40)
+        bounds.size = CGSize(width: 34, height: 34)
         resetPickerCondition()
     }
     
@@ -65,18 +67,20 @@ final class ColorPickerView: BaseView {
         colorPicker.layer.borderColor = UIColor.white.cgColor
         isHidden = false
     }
-
 }
 
 private extension ColorPickerView {
 
     @objc func panColorPicker(_ sender: UIPanGestureRecognizer) {
         switch sender.state {
+        case .began:
+            delegate?.didTouchColorPicker(self, at: CGPoint(x: center.x, y: center.y))
         case .changed:
-            delegate?.didMoveColorPicker(self, didMoveColorPicker: CGPoint(x: center.x, y: center.y))
             setNewCenterPosition(sender)
             setPickerBorderColor()
+            delegate?.didMoveColorPicker(self, didMoveColorPicker: CGPoint(x: center.x, y: center.y))
         case .ended:
+            delegate?.didFinishMovingColorPicker(self, at: CGPoint(x: center.x, y: center.y))
             colorPicker.backgroundColor = color
             colorPicker.layer.borderColor = UIColor.white.cgColor
         default:
