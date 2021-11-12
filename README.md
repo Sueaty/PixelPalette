@@ -38,7 +38,7 @@ Delete the from your palette freely.<br/>
 
 |  |  |  |  |  |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
-| <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview1.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview2.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview3.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview4.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview5.png"> |
+| <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview2_1.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview2_2.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview2_3.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview4.png"> | <img width=250 src="https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/preview5.png"> |
 
 ## Version Update <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
