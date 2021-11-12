@@ -42,11 +42,15 @@ Delete the from your palette freely.<br/>
 
 ## Version Update <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
 
-<b>ver 1.1.0</b>
+<b>ver2.0.0</b>
+* Present color information prior to saving
+* Support scaled preview for more intricate user experience
+
+<b>ver1.1.0</b>
 * Support new language (Korean)
 * Allow user to tap on image to move picker
 
-<b>ver 1.0.0</b>
+<b>ver1.0.0</b>
 * App Store Release
 
 ## Reach Out! <img src = "https://github.com/Sueaty/PixelPalette/blob/main/Screenshots/icon_nobg.png?raw=true" width = 50 align = right>
