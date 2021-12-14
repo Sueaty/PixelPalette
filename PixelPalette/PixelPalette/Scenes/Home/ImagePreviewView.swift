@@ -47,11 +47,9 @@ final class ImagePreviewView: BaseView {
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext(),
               let location = location else { return }
-        context.translateBy(x: 1 * frame.width * 0.5,
-                            y: 1 * frame.height * 0.5)
+        context.translateBy(x: frame.width * 0.5, y: frame.height * 0.5)
         context.scaleBy(x: 2.5, y: 2.5)
-        context.translateBy(x: -1 * location.x,
-                            y: -1 * location.y)
+        context.translateBy(x: -location.x, y: -location.y)
         previewImage.layer.render(in: context)
     }
     

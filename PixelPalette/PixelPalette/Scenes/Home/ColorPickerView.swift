@@ -3,7 +3,6 @@
 //  PixelPalette
 //
 //  Created by Sue Cho on 2021/08/02.
-//  Last edit by Sue Cho ono 2021/10/08.
 //
 
 import UIKit

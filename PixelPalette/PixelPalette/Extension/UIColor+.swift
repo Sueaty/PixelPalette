@@ -44,8 +44,8 @@ extension UIColor {
         var a: CGFloat = 0
         getRed(&r, green: &g, blue: &b, alpha: &a)
         
-        let rgb:Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
-        return String(format:"#%06x", rgb)
+        let rgb:  Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255) << 0
+        return String(format: "#%06x", rgb)
     }
     
     func toRGBA() -> [Int] {
@@ -55,7 +55,7 @@ extension UIColor {
         var a: CGFloat = 0
         getRed(&r, green: &g, blue: &b, alpha: &a)
         
-        return [Int(r * 255.0), Int(g * 255.0), Int(b * 255.0), Int(a * 255.0)]
+        return [Int(r * 255), Int(g * 255), Int(b * 255), Int(a * 255)]
     }
     
 }
