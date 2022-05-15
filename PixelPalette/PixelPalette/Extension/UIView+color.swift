@@ -9,6 +9,8 @@ import UIKit
 
 extension UIView {
     
+    // Core Graphics에서는 화면을 그리기 위해 비트맵 이미지를 활용 (비트맵 이미지 = 픽셀의 집합)
+    // CGContext를 활용해서 픽셀 단위로 처리할 수 있음
     func colorOfPoint(point: CGPoint) -> UIColor {
         let colorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)

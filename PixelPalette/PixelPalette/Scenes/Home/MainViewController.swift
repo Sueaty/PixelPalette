@@ -10,6 +10,7 @@ import Photos
 import SnapKit
 import CoreData
 import Toast_Swift
+import GoogleMobileAds
 
 final class MainViewController: BaseViewController {
     
@@ -77,17 +78,36 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
+    private lazy var bannerAdView: GADBannerView = {
+        let banner = GADBannerView()
+        //banner.adUnitID = "ca-app-pub-5256069577467700/4224804942"
+        banner.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+        banner.backgroundColor = UIColor(hexString: "#4d4848")
+        
+        let bannerWidth = self.view.frame.inset(by: view.safeAreaInsets).size.width
+        banner.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(bannerWidth)
+        
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        return banner
+    }()
+    
     // MARK:- Properties
     private lazy var mediaController = UIImagePickerController()
     private lazy var currentColor = CurrentColor(imageView: imageView)
-    
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        bannerAdView.load(GADRequest())
+    }
+    
     // MARK:- Override Functions
     override func setInit() {
         super.setInit()
         
-        mediaController.delegate = self
         pickerView.delegate = self
+        mediaController.delegate = self
+        bannerAdView.rootViewController = self
     }
     
     override func setViewHierarchy() {
@@ -101,6 +121,7 @@ final class MainViewController: BaseViewController {
         imageView.addSubview(pickerView)
         view.addSubview(colorInfoView)
         view.addSubview(previewView)
+        view.addSubview(bannerAdView)
     }
     
     override func setViewConstraint() {
@@ -139,6 +160,11 @@ final class MainViewController: BaseViewController {
         colorInfoView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(10)
             make.trailing.equalToSuperview().offset(-10)
+        }
+        
+        bannerAdView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     
@@ -192,6 +218,14 @@ private extension MainViewController {
             defaultAlertController(title: "Error",
                                    message: "Failed to save due to an error : \(error) \(error.userInfo)")
         }
+    }
+    
+    func loadBannerAd() {
+        let frame = view.frame.inset(by: view.safeAreaInsets)
+        let width = frame.size.width
+        
+        bannerAdView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(width)
+        bannerAdView.load(GADRequest())
     }
     
 }
