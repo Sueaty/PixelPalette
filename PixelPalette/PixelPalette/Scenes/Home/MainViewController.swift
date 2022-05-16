@@ -80,13 +80,11 @@ final class MainViewController: BaseViewController {
     
     private lazy var bannerAdView: GADBannerView = {
         let banner = GADBannerView()
-        //banner.adUnitID = "ca-app-pub-5256069577467700/4224804942"
-        banner.adUnitID = "ca-app-pub-3940256099942544/2934735716"
+        banner.adUnitID = "ca-app-pub-5256069577467700/4224804942"
         banner.backgroundColor = UIColor(hexString: "#4d4848")
         
         let bannerWidth = self.view.frame.inset(by: view.safeAreaInsets).size.width
-        banner.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(bannerWidth)
-        
+        banner.adSize = GADAdSizeFromCGSize(CGSize(width: bannerWidth, height: 50))
         banner.translatesAutoresizingMaskIntoConstraints = false
         return banner
     }()
@@ -145,26 +143,26 @@ final class MainViewController: BaseViewController {
             make.centerY.equalTo(imageLoadButton)
         }
         
+        bannerAdView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+        
         defaultView!.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.bottom.equalTo(bannerAdView.snp.top)
             make.leading.trailing.equalToSuperview()
         }
         
         imageView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(view.frame.width)
-            make.centerY.equalToSuperview().offset(40)
+            make.centerY.equalToSuperview().offset(-bannerAdView.adSize.size.height/2)
         }
         
         colorInfoView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(10)
             make.trailing.equalToSuperview().offset(-10)
-        }
-        
-        bannerAdView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     
@@ -218,14 +216,6 @@ private extension MainViewController {
             defaultAlertController(title: "Error",
                                    message: "Failed to save due to an error : \(error) \(error.userInfo)")
         }
-    }
-    
-    func loadBannerAd() {
-        let frame = view.frame.inset(by: view.safeAreaInsets)
-        let width = frame.size.width
-        
-        bannerAdView.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(width)
-        bannerAdView.load(GADRequest())
     }
     
 }
